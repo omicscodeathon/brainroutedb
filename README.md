@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # brainroutedb
 Database for Predicting Blood-Brain Barrier-Permeable mTOR Inhibitors for Alzheimer’s Disease Using Machine Learning
 =======
@@ -244,4 +243,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [⬆ Back to Top](#-brainroute-database)
 
 </div>
->>>>>>> master
