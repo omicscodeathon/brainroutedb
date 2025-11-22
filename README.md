@@ -1,5 +1,4 @@
-# brainroutedb
-Database for Predicting Blood-Brain Barrier-Permeable mTOR Inhibitors for Alzheimer’s Disease Using Machine Learning
+# Database for Predicting Blood-Brain Barrier-Permeable mTOR Inhibitors for Alzheimer’s Disease Using Machine Learning
 =======
 # 🧠 BrainRoute Database
 
@@ -9,7 +8,7 @@ Database for Predicting Blood-Brain Barrier-Permeable mTOR Inhibitors for Alzhei
 
 A sophisticated **Molecular Intelligence Platform** for exploring Blood-Brain Barrier (BBB) permeable molecules with AI-powered predictions and comprehensive molecular data visualization.
 
-🔗 **Live Database:** [https://Mr-Nnobody.github.io/brainroute-db](https://Mr-Nnobody.github.io/brainroute-db)
+🔗 **Live Database:** [https://omicscodeathon.github.io/brainroutedb](https://omicscodeathon.github.io/brainroutedb)
 
 ## 🔗 **BrainRoute Platform:**:[BrainRoute on HuggingFace](https://huggingface.co/spaces/Nnobody/brainroute)
 
@@ -73,7 +72,7 @@ Before you begin, ensure you have the following installed:
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/Mr-Nnobody/brainroute-db.git
+git clone https://github.com/omicscodeathon/brainroutedb.git
 cd brainroute-db
 ```
 
@@ -210,8 +209,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📧 Contact & Support
 
 - **Platform**: [BrainRoute on HuggingFace](https://huggingface.co/spaces/Nnobody/NeuroGate)
-- **Issues**: [GitHub Issues](https://github.com/Mr-Nnobody/brainroute-db/issues)
-- **Website**: [BrainRoute Database](https://Mr-Nnobody.github.io/brainroute-db)
+- **Issues**: [GitHub Issues](https://github.com/omicscodeathon/brainroutedb/issues)
+- **Website**: [BrainRoute Database](https://omicscodeathon.github.io/brainroutedb)
 
 ---
 
@@ -230,9 +229,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📊 Stats
 
-![GitHub Stars](https://img.shields.io/github/stars/Mr-Nnobody/brainroute-db?style=social)
-![GitHub Forks](https://img.shields.io/github/forks/Mr-Nnobody/brainroute-db?style=social)
-![GitHub Issues](https://img.shields.io/github/issues/Mr-Nnobody/brainroute-db)
+![GitHub Stars](https://img.shields.io/github/stars/omicscodeathon/brainroutedb?style=social)
+![GitHub Forks](https://img.shields.io/github/forks/omicscodeathon/brainroutedb?style=social)
+![GitHub Issues](https://img.shields.io/github/issues/omicscodeathon/brainroutedb)
 
 ---
 
