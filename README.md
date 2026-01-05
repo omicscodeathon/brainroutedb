@@ -6,7 +6,7 @@
 
 A sophisticated **Molecular Intelligence Platform** for exploring Blood-Brain Barrier (BBB) permeable molecules with AI-powered predictions and comprehensive molecular data visualization. Now powered by **Neon PostgreSQL** for secure, scalable data storage.
 
-🔗 **Live Database:** [https://omicscodeathon.io/brainroutedb](https://omicscodeathon.io/brainroutedb)
+🔗 **Live Database:** [https://omicscodeathon.github.io/brainroutedb](https://omicscodeathon.github.io/brainroutedb)
 
 ## 🔗 **BrainRoute Platform:**:[BrainRoute on HuggingFace](https://huggingface.co/spaces/Nnobody/brainroute)
 
@@ -143,21 +143,31 @@ For detailed setup instructions, API documentation, database schema, and deploym
 
 ## 🚀 Deployment
 
-### Backend Deployment
+### 1. Backend Deployment (Render)
 
-Deploy to Railway, Render, or Heroku:
+The backend must be hosted publicly to be accessible by the live frontend.
 
-- Set `DATABASE_URL` environment variable
-- Deploy `server/index.js`
-- Note the deployed backend URL
+1.  Push code to GitHub.
+2.  Create a new **Web Service** on [Render](https://render.com/).
+3.  Connect your repository.
+4.  Set **Build Command**: `npm install`
+5.  Set **Start Command**: `node server/index.js`
+6.  Add Environment Variables in Render Dashboard:
+    - `DATABASE_URL`: Your Neon connection string
+    - `SERVER_PORT`: `5000`
+7.  Copy your new backend URL (e.g., `https://brainroutedb-api.onrender.com`).
 
-### Frontend Deployment
+### 2. Frontend Deployment (GitHub Pages)
 
-Deploy to Vercel, Netlify, or GitHub Pages:
-
-- Set `REACT_APP_API_URL` to your deployed backend URL
-- Build: `npm run build`
-- Deploy the `build/` folder
+1.  Update your local `.env` file with the live backend URL:
+    ```env
+    REACT_APP_API_URL=https://your-backend-app.onrender.com
+    ```
+2.  Deploy the frontend:
+    ```bash
+    npm run deploy
+    ```
+    This command builds the app and pushes it to the `gh-pages` branch.
 
 ---
 

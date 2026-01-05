@@ -136,15 +136,31 @@ formula TEXT
 
 ### Backend Deployment (e.g., Heroku, Railway, Render)
 
-1. Set environment variables on hosting platform
-2. Deploy backend code from `server/` directory
-3. Update `REACT_APP_API_URL` in frontend `.env` to production API URL
+The backend must be hosted publicly to be accessible by the live frontend.
+
+1.  Push code to GitHub.
+2.  Create a new **Web Service** on [Render](https://render.com/).
+3.  Connect your repository.
+4.  Set **Build Command**: `npm install`
+5.  Set **Start Command**: `node server/index.js`
+6.  Add Environment Variables in Render Dashboard:
+    - `DATABASE_URL`: Your Neon connection string
+    - `SERVER_PORT`: `5000`
+7.  Deploy anf Copy your new backend URL (e.g., `https://brainroutedb-api.onrender.com`).
 
 ### Frontend Deployment (e.g., Vercel, Netlify, GitHub Pages)
 
-1. Build: `npm run build`
-2. Deploy the `build/` folder
-3. Set `REACT_APP_API_URL` environment variable to production API
+1.  Update your local `.env` file with the live backend URL:
+    ```env
+    REACT_APP_API_URL=https://your-backend-app.onrender.com
+    ```
+2.  Deploy the frontend:
+    ```bash
+    npm run deploy
+    ```
+    This command builds the app and pushes it to the `gh-pages` branch.
+
+---
 
 ## Security Best Practices
 
