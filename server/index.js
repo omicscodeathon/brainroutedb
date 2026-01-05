@@ -5,8 +5,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 
 const app = express();
-// Use SERVER_PORT from .env to avoid conflict with React's default PORT
-const PORT = process.env.SERVER_PORT || 5000;
+// Use PORT (provided by hosting services) or SERVER_PORT (local .env) or default to 5000
+const PORT = process.env.PORT || process.env.SERVER_PORT || 5000;
 
 // Middleware
 app.use(helmet());
