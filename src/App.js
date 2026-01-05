@@ -27,70 +27,47 @@ const mockMolecules = [
     id: "MOL-001",
     name: "Aspirin",
     smiles: "CC(=O)OC1=CC=CC=C1C(=O)O",
-    weight: 180.158,
     formula: "C9H8O4",
     prediction: "BBB-",
     confidence: 87.5,
-    uncertainty: 12.3,
-    properties: {
-      mw: 180.158,
-      logp: 1.19,
-      hbd: 1,
-      hba: 4,
-      tpsa: 63.6,
-      rotatable_bonds: 3,
-      heavy_atoms: 13,
-      meltingPoint: "135°C",
-      boilingPoint: "140°C",
-      solubility: "Slightly soluble in water",
-      polarSurfaceArea: "63.6 Ų",
-    },
+    mw: 180.158,
+    logp: 1.19,
+    hbd: 1,
+    hba: 4,
+    tpsa: 63.6,
+    rotatable_bonds: 3,
+    heavy_atoms: 13,
   },
   {
     id: "MOL-002",
     name: "Caffeine",
     smiles: "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
-    weight: 194.19,
     formula: "C8H10N4O2",
     prediction: "BBB+",
     confidence: 92.1,
-    uncertainty: 8.4,
-    properties: {
-      mw: 194.19,
-      logp: -0.07,
-      hbd: 0,
-      hba: 6,
-      tpsa: 58.4,
-      rotatable_bonds: 0,
-      heavy_atoms: 14,
-      meltingPoint: "238°C",
-      boilingPoint: "178°C",
-      solubility: "Freely soluble in water",
-      polarSurfaceArea: "58.4 Ų",
-    },
+    mw: 194.19,
+    logp: -0.07,
+    hbd: 0,
+    hba: 6,
+    tpsa: 58.4,
+    rotatable_bonds: 0,
+    heavy_atoms: 14,
   },
   {
     id: "MOL-003",
     name: "Glucose",
     smiles: "C(C1C(C(C(C(O1)O)O)O)O)O",
-    weight: 180.156,
     formula: "C6H12O6",
     prediction: "BBB-",
     confidence: 89.3,
     uncertainty: 10.2,
-    properties: {
-      mw: 180.156,
-      logp: -3.24,
-      hbd: 5,
-      hba: 6,
-      tpsa: 110.4,
-      rotatable_bonds: 1,
-      heavy_atoms: 12,
-      meltingPoint: "146°C",
-      boilingPoint: "Decomposes",
-      solubility: "Very soluble in water",
-      polarSurfaceArea: "110.4 Ų",
-    },
+    mw: 180.156,
+    logp: -3.24,
+    hbd: 5,
+    hba: 6,
+    tpsa: 110.4,
+    rotatable_bonds: 1,
+    heavy_atoms: 12,
   },
 ];
 
@@ -182,7 +159,7 @@ const HomePage = ({
     {isLoading && (
       <div className="fixed top-20 right-6 bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 z-50">
         <RefreshCw className="w-5 h-5 animate-spin" />
-        <span className="font-medium">Syncing with Google Sheets...</span>
+        <span className="font-medium">Syncing with Neon Database...</span>
       </div>
     )}
     <div className="flex items-center justify-center mb-4">
@@ -448,10 +425,10 @@ const MoleculeDetail = ({ molecules }) => {
                   : "bg-red-100 text-red-700"
               }`}
             >
-              {selectedMolecule.prediction} •{" "}
-              {selectedMolecule.confidence.toFixed(2)}% confidence
+              {selectedMolecule.prediction} • {selectedMolecule.confidence}%
+              confidence
             </span>
-            <span
+            {/* <span
               className={`px-4 py-2 rounded-full text-sm font-bold ${
                 selectedMolecule.uncertainty < 50
                   ? "bg-green-100 text-green-700"
@@ -459,7 +436,7 @@ const MoleculeDetail = ({ molecules }) => {
               }`}
             >
               {selectedMolecule.uncertainty.toFixed(2)}% uncertainty
-            </span>
+            </span> */}
           </div>
         </div>
 
@@ -491,7 +468,7 @@ const MoleculeDetail = ({ molecules }) => {
                   Molecular Weight
                 </p>
                 <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.properties.mw} g/mol
+                  {selectedMolecule.weight} g/mol
                 </p>
               </div>
               <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border-2 border-indigo-200">
@@ -499,7 +476,7 @@ const MoleculeDetail = ({ molecules }) => {
                   LogP
                 </p>
                 <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.properties.logp}
+                  {selectedMolecule.logP}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border-2 border-purple-200">
@@ -507,7 +484,7 @@ const MoleculeDetail = ({ molecules }) => {
                   H-Bond Donors
                 </p>
                 <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.properties.hbd}
+                  {selectedMolecule.hbd}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-pink-50 to-red-50 p-4 rounded-xl border-2 border-pink-200">
@@ -515,7 +492,7 @@ const MoleculeDetail = ({ molecules }) => {
                   H-Bond Acceptors
                 </p>
                 <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.properties.hba}
+                  {selectedMolecule.hba}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-green-200">
@@ -523,7 +500,7 @@ const MoleculeDetail = ({ molecules }) => {
                   TPSA
                 </p>
                 <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.properties.tpsa} Ų
+                  {selectedMolecule.tpsa} Ų
                 </p>
               </div>
               <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-xl border-2 border-yellow-200">
@@ -531,7 +508,7 @@ const MoleculeDetail = ({ molecules }) => {
                   Rotatable Bonds
                 </p>
                 <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.properties.rotatable_bonds}
+                  {selectedMolecule.rotatable_bonds}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-4 rounded-xl border-2 border-cyan-200">
@@ -539,12 +516,12 @@ const MoleculeDetail = ({ molecules }) => {
                   Heavy Atoms
                 </p>
                 <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.properties.heavy_atoms}
+                  {selectedMolecule.heavy_atoms}
                 </p>
               </div>
             </div>
 
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <h3 className="text-lg font-bold mb-4 text-gray-800">
                 Physical Properties
               </h3>
@@ -574,7 +551,7 @@ const MoleculeDetail = ({ molecules }) => {
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -600,7 +577,7 @@ const AppContent = () => {
         (mol) =>
           mol.name.toLowerCase().includes(query) ||
           mol.smiles.toLowerCase().includes(query) ||
-          mol.id.toLowerCase().includes(query) ||
+          mol.id.includes(query) ||
           mol.formula.toLowerCase().includes(query)
       );
       setFilteredMolecules(filtered);
@@ -621,127 +598,67 @@ const AppContent = () => {
     navigate(`/molecule/${molecule.id}`);
   };
 
-  // Estimate physical properties based on molecular structure
-  const estimatePhysicalProperties = useCallback((molecule) => {
-    const logP = molecule.properties.logp || 0;
-    const mw = molecule.properties.mw || 0;
-
-    // Estimate solubility based on LogP
-    let solubility;
-    if (logP < 0) solubility = "Very soluble in water";
-    else if (logP < 1) solubility = "Freely soluble in water";
-    else if (logP < 3) solubility = "Soluble in water";
-    else if (logP < 5) solubility = "Slightly soluble in water";
-    else solubility = "Poorly soluble in water";
-
-    // Rough estimation of boiling point (very approximate)
-    const estimatedBP =
-      mw < 100
-        ? "< 100°C"
-        : mw < 200
-        ? "100-200°C"
-        : mw < 300
-        ? "200-300°C"
-        : "> 300°C";
-
-    // Rough estimation of melting point
-    const estimatedMP = "Data not available";
-
-    return {
-      solubility,
-      boilingPoint: estimatedBP,
-      meltingPoint: estimatedMP,
-    };
-  }, []);
-
-  // Function to fetch data from Google Sheets (runs in background)
-  const fetchFromGoogleSheets = useCallback(async () => {
+  // Function to fetch data from Neon database via secure API
+  const fetchFromDatabase = useCallback(async () => {
     setIsLoading(true);
     try {
-      const SHEET_ID = process.env.REACT_APP_GOOGLE_SHEET_ID;
-      const API_KEY = process.env.REACT_APP_GOOGLE_SHEETS_API_KEY;
-      const RANGE = process.env.REACT_APP_GOOGLE_SHEET_RANGE;
+      // Force port 5000 if env var is missing to avoid hitting the React dev server
+      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const url = `${API_URL}/api/molecules`;
 
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-      console.log("Fetching from:", url);
+      console.log(`🔄 Fetching from: ${url}`);
 
       const response = await fetch(url);
 
-      console.log("Response status:", response.status);
-      const data = await response.json();
-      console.log("Response data:", data);
-
-      if (!response.ok) {
+      // Check if we got HTML instead of JSON (The "<" error)
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Received HTML instead of JSON:", text.substring(0, 100));
         throw new Error(
-          `HTTP error! status: ${response.status}, message: ${
-            data.error?.message || "Unknown error"
-          }`
+          `Server returned HTML. Ensure backend is running on port 5000.`
         );
       }
 
-      const rows = data.values;
-
-      if (!rows || rows.length < 1) {
-        console.log("No data found in sheet");
-        setIsLoading(false);
-        return;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const parsedMolecules = rows.map((row, index) => {
-        const baseProperties = {
-          mw: parseFloat(row[10]) || 0,
-          logp: parseFloat(row[134]) || 0,
-          hbd: parseInt(row[123]) || 0,
-          hba: parseInt(row[122]) || 0,
-          tpsa: parseFloat(row[87]) || 0,
-          rotatable_bonds: parseInt(row[126]) || 0,
-          heavy_atoms: parseInt(row[110]) || 0,
-        };
+      const result = await response.json();
 
-        const physicalProps = estimatePhysicalProperties({
-          properties: baseProperties,
-        });
+      if (!result.success || !Array.isArray(result.data)) {
+        throw new Error("Invalid API response format");
+      }
 
-        return {
-          id: `MOL-${String(index + 1).padStart(3, "0")}`,
-          name: row[1] || "Unknown",
-          smiles: row[2] || "",
-          formula: row[3] || "",
-          weight: baseProperties.mw,
-          prediction: row[221] || "N/A",
-          confidence: parseFloat(row[222]) || 0,
-          uncertainty: parseFloat(row[223]) || 0,
-          properties: {
-            ...baseProperties,
-            ...physicalProps,
-          },
-        };
-      });
+      const fetchedMolecules = result.data;
+      console.log(`Successfully loaded ${fetchedMolecules.length} molecules`);
 
-      setMolecules(parsedMolecules);
-      setFilteredMolecules(parsedMolecules);
-      console.log(
-        `✅ Successfully loaded ${parsedMolecules.length} molecules from Google Sheets`
-      );
+      if (fetchedMolecules.length > 0) {
+        setMolecules(fetchedMolecules);
+
+        // Only update the displayed list if the user is NOT currently searching
+        // This prevents the list from resetting while you are typing
+        if (searchInput.trim() === "") {
+          setFilteredMolecules(fetchedMolecules);
+        }
+      }
     } catch (error) {
-      console.error("❌ Error fetching from Google Sheets:", error);
-      console.error("Error details:", error.message);
-      // Keep using mock data if fetch fails
+      console.error("Error fetching from database:", error.message);
     } finally {
       setIsLoading(false);
     }
-  }, [estimatePhysicalProperties]);
+  }, [searchInput]); // Add searchInput dependency so we know if user is searching.
 
-  // Real-time data syncing - fetch from Google Sheets periodically
+  // Real-time data syncing - fetch from database periodically
   useEffect(() => {
-    fetchFromGoogleSheets();
+    fetchFromDatabase();
 
     const interval = setInterval(() => {
-      fetchFromGoogleSheets();
-    }, 30000);
+      fetchFromDatabase();
+    }, 180000);
 
     return () => clearInterval(interval);
-  }, [fetchFromGoogleSheets]);
+  }, [fetchFromDatabase]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">

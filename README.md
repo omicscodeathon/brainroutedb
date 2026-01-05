@@ -1,14 +1,12 @@
-# Database for Predicting Blood-Brain Barrier-Permeable mTOR Inhibitors for Alzheimer’s Disease Using Machine Learning
-
-# 🧠 BrainRoute Database
+# 🧠 BrainRoute Database (brainroutedb)
 
 ![BrainRoute Banner](https://img.shields.io/badge/BrainRoute-Database-blue?style=for-the-badge&logo=react)
 ![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=flat-square&logo=react)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-A sophisticated **Molecular Intelligence Platform** for exploring Blood-Brain Barrier (BBB) permeable molecules with AI-powered predictions and comprehensive molecular data visualization.
+A sophisticated **Molecular Intelligence Platform** for exploring Blood-Brain Barrier (BBB) permeable molecules with AI-powered predictions and comprehensive molecular data visualization. Now powered by **Neon PostgreSQL** for secure, scalable data storage.
 
-🔗 **Live Database:** [https://omicscodeathon.github.io/brainroutedb](https://omicscodeathon.github.io/brainroutedb)
+🔗 **Live Database:** [https://omicscodeathon.io/brainroutedb](https://omicscodeathon.io/brainroutedb)
 
 ## 🔗 **BrainRoute Platform:**:[BrainRoute on HuggingFace](https://huggingface.co/spaces/Nnobody/brainroute)
 
@@ -18,10 +16,11 @@ A sophisticated **Molecular Intelligence Platform** for exploring Blood-Brain Ba
 
 - 🔬 **Comprehensive molecular database** with BBB permeability predictions
 - 🧪 **Interactive 2D structure visualization** powered by RDKit
-- 📊 **Real-time data synchronization** with Google Sheets
+- 📊 **Real-time data synchronization** with Neon PostgreSQL
 - 🤖 **AI-powered predictions** with confidence and uncertainty metrics
 - 🔍 **Advanced search capabilities** by name, SMILES, ID, or formula
 - 📈 **Detailed molecular properties** including physicochemical parameters
+- 🔒 **Secure architecture** with isolated backend API
 
 ### What is the Blood-Brain Barrier (BBB)?
 
@@ -33,9 +32,9 @@ The Blood-Brain Barrier is a selective permeability barrier that protects the br
 
 ---
 
-## ✨ Features
+## Features
 
-### 🎯 Core Functionality
+### Core Functionality
 
 - **Smart Search Engine**: Find molecules by name, SMILES notation, molecular formula, or unique identifier
 - **Molecular Structure Visualization**: View interactive 2D chemical structures rendered with RDKit
@@ -46,26 +45,37 @@ The Blood-Brain Barrier is a selective permeability barrier that protects the br
   - Hydrogen bond donors/acceptors
   - Topological Polar Surface Area (TPSA)
   - Rotatable bonds and heavy atoms
-  - Physical properties (melting point, boiling point, solubility)
 
-### 🚀 Technical Features
+### Technical Features
 
-- **Real-time Sync**: Automatic synchronization with Google Sheets every 30 seconds
+- **Real-time Sync**: Automatic synchronization with Neon database every 30 seconds
 - **Responsive Design**: Beautiful, modern UI built with Tailwind CSS
 - **Fast Navigation**: Client-side routing with React Router
-- **Production Ready**: Optimized build for GitHub Pages deployment
+- **Production Ready**: Optimized build for deployment
+- **Secure Backend**: Database credentials never exposed to frontend
+- **REST API**: Express.js API with security headers
 
 ---
 
-## 🎬 Getting Started
+## Architecture
+
+- **Frontend**: React with Tailwind CSS (port 3000)
+- **Backend**: Express.js REST API (port 5000)
+- **Database**: Neon PostgreSQL (Serverless Postgres)
+- **Security**: Helmet, CORS, SSL/TLS encryption
+
+---
+
+## Getting Started
 
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** (v16 or higher) - [Download here](https://nodejs.org/)
+- **Node.js** (v14 or higher) - [Download here](https://nodejs.org/)
 - **npm** (comes with Node.js)
 - **Git** - [Download here](https://git-scm.com/)
+- **Neon PostgreSQL account** - [Sign up here](https://neon.tech/)
 
 ### Installation
 
@@ -73,7 +83,7 @@ Before you begin, ensure you have the following installed:
 
 ```bash
 git clone https://github.com/omicscodeathon/brainroutedb.git
-cd brainroute-db
+cd brainroutedb
 ```
 
 2. **Install dependencies**
@@ -87,74 +97,67 @@ npm install
 Create a `.env` file in the project root:
 
 ```env
-REACT_APP_GOOGLE_SHEETS_API_KEY=your_google_sheets_api_key
-REACT_APP_GOOGLE_SHEET_ID=your_google_sheet_id
-REACT_APP_GOOGLE_SHEET_RANGE=your_sheet_range
+# Neon Database Configuration (Backend only - NEVER expose to frontend)
+DATABASE_URL= Connection String( looks like: 'postgresql://username:password@host/database?sslmode=require&channel_binding=require')
+
+# API Configuration
+REACT_APP_API_URL=http://localhost:5000
+FRONTEND_URL=http://localhost:3000
+
+# Port for backend server
+PORT=5000
 ```
 
-**How to get a Google Sheets API key:**
+4. **Set up the database**
 
-- Go to [Google Cloud Console](https://console.cloud.google.com/)
-- Create a new project or select existing one
-- Enable the Google Sheets API
-- Create credentials (API Key)
-- Restrict the key to your domain and Google Sheets API only
+- Create a Neon PostgreSQL database
+- Run the schema from `server/schema.sql` in Neon SQL Editor
+- Import your molecule data
 
-4. **Start the development server**
+5. **Run the application**
 
 ```bash
-npm start
+# Development (runs frontend + backend together)
+npm run dev
+
+# Or run separately:
+npm run server  # Backend on port 5000
+npm start       # Frontend on port 3000
 ```
 
-The app will open at [http://localhost:3000](http://localhost:3000)
+---
+
+## 📚 Documentation
+
+For detailed setup instructions, API documentation, database schema, and deployment guide, see [SETUP.md](./SETUP.md).
+
+---
+
+## 📡 API Endpoints
+
+- `GET /api/health` - Health check
+- `GET /api/molecules` - Fetch all molecules from database
+- `GET /api/molecules/:id` - Fetch single molecule by ID
 
 ---
 
 ## 🚀 Deployment
 
-### Deploy to GitHub Pages
+### Backend Deployment
 
-1. **Update `package.json`** with your repository information:
+Deploy to Railway, Render, or Heroku:
 
-```json
-{
-  "homepage": "https://YOUR-USERNAME.github.io/YOUR-REPO-NAME"
-}
-```
+- Set `DATABASE_URL` environment variable
+- Deploy `server/index.js`
+- Note the deployed backend URL
 
-2. **Build and deploy**
+### Frontend Deployment
 
-```bash
-npm run deploy
-```
+Deploy to Vercel, Netlify, or GitHub Pages:
 
-3. **Configure GitHub Pages**
-   - Go to your repository → Settings → Pages
-   - Source: Select `gh-pages` branch and `/ (root)` folder
-   - Save and wait 2-3 minutes
-
-Your site will be live at: `https://YOUR-USERNAME.github.io/YOUR-REPO-NAME`
-
----
-
-## 📊 Google Sheets Data Structure
-
-The app expects a Google Sheet with the following column structure:
-
-| Column Index | Data Type | Description                           |
-| ------------ | --------- | ------------------------------------- |
-| 1            | String    | Molecule Name                         |
-| 2            | String    | SMILES Notation                       |
-| 9            | Number    | Molecular Weight                      |
-| 86           | Number    | TPSA (Topological Polar Surface Area) |
-| 109          | Number    | Heavy Atoms Count                     |
-| 121          | Number    | H-Bond Acceptors                      |
-| 122          | Number    | H-Bond Donors                         |
-| 125          | Number    | Rotatable Bonds                       |
-| 133          | Number    | LogP                                  |
-| 220          | String    | BBB Prediction (BBB+ or BBB-)         |
-| 221          | Number    | Confidence (%)                        |
-| 222          | Number    | Uncertainty (%)                       |
+- Set `REACT_APP_API_URL` to your deployed backend URL
+- Build: `npm run build`
+- Deploy the `build/` folder
 
 ---
 
@@ -165,13 +168,20 @@ The app expects a Google Sheet with the following column structure:
 - **[Tailwind CSS](https://tailwindcss.com/)** (v3.3.0) - Styling
 - **[Lucide React](https://lucide.dev/)** - Icon library
 - **[RDKit](https://www.rdkit.org/)** - Chemical structure visualization
-- **[Google Sheets API](https://developers.google.com/sheets/api)** - Data source
+- **[Express.js](https://expressjs.com/)** - Backend API framework
+- **[Neon PostgreSQL](https://neon.tech/)** - Serverless database
+- **[Helmet](https://helmetjs.github.io/)** - Security middleware
+- **[node-postgres (pg)](https://node-postgres.com/)** - PostgreSQL client
 
 ---
 
 ## 🔒 Security
 
-- **API Key Protection**: Never commit `.env` files. Always use environment variables.
+- **Database Isolation**: Database credentials never exposed to frontend
+- **API Authentication**: Backend API acts as secure intermediary
+- **SSL/TLS**: All database connections encrypted
+- **CORS Protection**: Restricted to allowed origins only
+- **Security Headers**: Helmet middleware for Express
 - **API Restrictions**: Restrict your Google Sheets API key to:
   - Specific domains (your GitHub Pages URL)
   - Google Sheets API only
