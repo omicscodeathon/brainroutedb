@@ -15,7 +15,7 @@ app.use(
     origin: "*", // Allow frontend access
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 app.use(express.json());
 
@@ -80,8 +80,8 @@ app.get("/api/molecules", async (req, res) => {
         row.prediction === "1" || row.prediction === 1
           ? "BBB+"
           : row.prediction === "0" || row.prediction === 0
-          ? "BBB-"
-          : row.prediction,
+            ? "BBB-"
+            : row.prediction,
     }));
 
     res.json({
@@ -96,6 +96,111 @@ app.get("/api/molecules", async (req, res) => {
       error: "Internal server error",
       details: err.message,
     });
+  }
+});
+
+app.get("/api/export", async (req, res) => {
+  try {
+    const query = `
+            SELECT 
+                id::text, 
+                "Name" as name, 
+                "Smiles" as smiles, 
+                formula, 
+                "Prediction" as prediction, 
+                "Confidence" as confidence, 
+                mw as weight, 
+                logp as "logP", 
+                hbd, 
+                hba, 
+                tpsa, 
+                rotatable_bonds, 
+                heavy_atoms 
+            FROM molecules_and_predictions
+            ORDER BY id DESC
+        `;
+
+    const { rows } = await pool.query(query);
+
+    const processedRows = rows.map((row) => ({
+      ...row,
+      // Ensure numeric values are numbers
+      weight: parseFloat(row.weight) || 0,
+      logP: parseFloat(row.logP) || 0,
+      hbd: parseInt(row.hbd) || 0,
+      hba: parseInt(row.hba) || 0,
+      tpsa: parseFloat(row.tpsa) || 0,
+      // Ensure prediction is formatted as a label
+      prediction:
+        row.prediction === "1" || row.prediction === 1
+          ? "BBB+"
+          : row.prediction === "0" || row.prediction === 0
+            ? "BBB-"
+            : row.prediction,
+    }));
+
+    // Convert to CSV
+    const headers = [
+      "ID",
+      "Name",
+      "Smiles",
+      "Formula",
+      "Prediction",
+      "Confidence",
+      "Molecular Weight",
+      "LogP",
+      "H-Bond Donors",
+      "H-Bond Acceptors",
+      "TPSA",
+      "Rotatable Bonds",
+      "Heavy Atoms",
+    ];
+
+    // Helper to escape CSV fields
+    const escapeCsv = (field) => {
+      if (field === null || field === undefined) return "";
+      const stringField = String(field);
+      if (
+        stringField.includes(",") ||
+        stringField.includes('"') ||
+        stringField.includes("\n")
+      ) {
+        return `"${stringField.replace(/"/g, '""')}"`;
+      }
+      return stringField;
+    };
+
+    let csvContent = headers.join(",") + "\n";
+
+    processedRows.forEach((row) => {
+      const values = [
+        row.id,
+        row.name,
+        row.smiles,
+        row.formula,
+        row.prediction,
+        row.confidence,
+        row.weight,
+        row.logP,
+        row.hbd,
+        row.hba,
+        row.tpsa,
+        row.rotatable_bonds,
+        row.heavy_atoms,
+      ];
+
+      csvContent += values.map(escapeCsv).join(",") + "\n";
+    });
+
+    res.header("Content-Type", "text/csv");
+    res.header(
+      "Content-Disposition",
+      'attachment; filename="brainroutedb_export.csv"',
+    );
+    res.send(csvContent);
+  } catch (err) {
+    console.error("Error exporting CSV:", err);
+    res.status(500).send("Error exporting data");
   }
 });
 

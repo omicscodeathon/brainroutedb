@@ -19,6 +19,7 @@ import {
   Activity,
   Atom,
   RefreshCw,
+  Download,
 } from "lucide-react";
 
 // Mock data - will be replaced with Google Sheets API data
@@ -154,6 +155,7 @@ const HomePage = ({
   handleSearchKeyPress,
   handleSearchClick,
   molecules,
+  handleDownloadCsv,
 }) => (
   <div className="max-w-5xl mx-auto text-center py-8">
     {isLoading && (
@@ -193,6 +195,15 @@ const HomePage = ({
           className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-full hover:from-blue-600 hover:to-indigo-700 transition shadow-lg"
         >
           <Search className="w-6 h-6" />
+        </button>
+      </div>
+      <div className="mt-4 flex justify-center">
+        <button
+          onClick={handleDownloadCsv}
+          className="flex items-center gap-2 bg-white text-blue-600 px-6 py-2 rounded-full border-2 border-blue-100 hover:border-blue-300 hover:shadow-md transition text-sm font-semibold"
+        >
+          <Download className="w-4 h-4" />
+          Download Full Database (CSV)
         </button>
       </div>
     </div>
@@ -263,6 +274,7 @@ const SearchResults = ({
   handleSearchClick,
   filteredMolecules,
   viewMoleculeDetail,
+  handleDownloadCsv,
 }) => (
   <div>
     <div className="mb-8">
@@ -293,6 +305,13 @@ const SearchResults = ({
           {filteredMolecules.length} molecules found
         </span>
       </h2>
+      <button
+        onClick={handleDownloadCsv}
+        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
+      >
+        <Download className="w-4 h-4" />
+        Export CSV
+      </button>
     </div>
 
     {filteredMolecules.length === 0 ? (
@@ -578,7 +597,7 @@ const AppContent = () => {
           mol.name.toLowerCase().includes(query) ||
           mol.smiles.toLowerCase().includes(query) ||
           mol.id.includes(query) ||
-          mol.formula.toLowerCase().includes(query)
+          mol.formula.toLowerCase().includes(query),
       );
       setFilteredMolecules(filtered);
     }
@@ -594,6 +613,15 @@ const AppContent = () => {
     }
   };
 
+  const handleDownloadCsv = () => {
+    // In development, prefer local server. In production, use environment variable.
+    const API_URL =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:5000"
+        : process.env.REACT_APP_API_URL || "http://localhost:5000";
+    window.open(`${API_URL}/api/export`, "_blank");
+  };
+
   const viewMoleculeDetail = (molecule) => {
     navigate(`/molecule/${molecule.id}`);
   };
@@ -603,7 +631,10 @@ const AppContent = () => {
     setIsLoading(true);
     try {
       // Force port 5000 if env var is missing to avoid hitting the React dev server
-      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const API_URL =
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:5000"
+          : process.env.REACT_APP_API_URL || "http://localhost:5000";
       const url = `${API_URL}/api/molecules`;
 
       console.log(`🔄 Fetching from: ${url}`);
@@ -616,7 +647,7 @@ const AppContent = () => {
         const text = await response.text();
         console.error("Received HTML instead of JSON:", text.substring(0, 100));
         throw new Error(
-          `Server returned HTML. Ensure backend is running on port 5000.`
+          `Server returned HTML. Ensure backend is running on port 5000.`,
         );
       }
 
@@ -708,6 +739,7 @@ const AppContent = () => {
                 handleSearchKeyPress={handleSearchKeyPress}
                 handleSearchClick={handleSearchClick}
                 molecules={molecules}
+                handleDownloadCsv={handleDownloadCsv}
               />
             }
           />
@@ -721,6 +753,7 @@ const AppContent = () => {
                 handleSearchClick={handleSearchClick}
                 filteredMolecules={filteredMolecules}
                 viewMoleculeDetail={viewMoleculeDetail}
+                handleDownloadCsv={handleDownloadCsv}
               />
             }
           />
