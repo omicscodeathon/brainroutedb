@@ -155,7 +155,6 @@ const HomePage = ({
   handleSearchKeyPress,
   handleSearchClick,
   molecules,
-  handleDownloadCsv,
 }) => (
   <div className="max-w-5xl mx-auto text-center py-8">
     {isLoading && (
@@ -195,15 +194,6 @@ const HomePage = ({
           className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-full hover:from-blue-600 hover:to-indigo-700 transition shadow-lg"
         >
           <Search className="w-6 h-6" />
-        </button>
-      </div>
-      <div className="mt-4 flex justify-center">
-        <button
-          onClick={handleDownloadCsv}
-          className="flex items-center gap-2 bg-white text-blue-600 px-6 py-2 rounded-full border-2 border-blue-100 hover:border-blue-300 hover:shadow-md transition text-sm font-semibold"
-        >
-          <Download className="w-4 h-4" />
-          Download Full Database (CSV)
         </button>
       </div>
     </div>
@@ -594,10 +584,10 @@ const AppContent = () => {
       const query = searchInput.toLowerCase();
       const filtered = molecules.filter(
         (mol) =>
-          mol.name.toLowerCase().includes(query) ||
-          mol.smiles.toLowerCase().includes(query) ||
-          mol.id.includes(query) ||
-          mol.formula.toLowerCase().includes(query),
+          (mol.name || "").toLowerCase().includes(query) ||
+          (mol.smiles || "").toLowerCase().includes(query) ||
+          (mol.id || "").toLowerCase().includes(query) ||
+          (mol.formula || "").toLowerCase().includes(query),
       );
       setFilteredMolecules(filtered);
     }
@@ -722,6 +712,13 @@ const AppContent = () => {
                 <Search className="w-5 h-5" />
                 <span>Search</span>
               </Link>
+              <button
+                onClick={handleDownloadCsv}
+                className="flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-medium"
+              >
+                <Download className="w-5 h-5" />
+                <span>Download DB</span>
+              </button>
             </div>
           </div>
         </div>
@@ -739,7 +736,6 @@ const AppContent = () => {
                 handleSearchKeyPress={handleSearchKeyPress}
                 handleSearchClick={handleSearchClick}
                 molecules={molecules}
-                handleDownloadCsv={handleDownloadCsv}
               />
             }
           />
