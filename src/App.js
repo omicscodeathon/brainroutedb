@@ -315,7 +315,7 @@ const HomePage = ({
             predict permeability.
           </p>
           <div className="text-xs font-mono text-slate-400 border-t pt-3 border-slate-100">
-            F1: ~94% Accuracy: ~94% (On External unseen data)
+            F1: ~94%, Accuracy: ~94% (On unseen data)
           </div>
         </div>
 
