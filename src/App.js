@@ -20,6 +20,8 @@ import {
   Atom,
   RefreshCw,
   Download,
+  ChevronDown,
+  FileText,
 } from "lucide-react";
 
 // Mock data - will be replaced with Google Sheets API data
@@ -574,7 +576,27 @@ const AppContent = () => {
   const [molecules, setMolecules] = useState(mockMolecules);
   const [filteredMolecules, setFilteredMolecules] = useState(mockMolecules);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
+  const downloadMenuRef = useRef(null);
   const navigate = useNavigate();
+
+  //  Update this link with the actual training data location
+  const TRAINING_DATA_URL =
+    "https://github.com/omicscodeathon/brainroute/tree/main/data";
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        downloadMenuRef.current &&
+        !downloadMenuRef.current.contains(event.target)
+      ) {
+        setIsDownloadMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Filter molecules when search input changes
   useEffect(() => {
@@ -712,13 +734,63 @@ const AppContent = () => {
                 <Search className="w-5 h-5" />
                 <span>Search</span>
               </Link>
-              <button
-                onClick={handleDownloadCsv}
-                className="flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-medium"
-              >
-                <Download className="w-5 h-5" />
-                <span>Download DB</span>
-              </button>
+
+              <div className="relative" ref={downloadMenuRef}>
+                <button
+                  onClick={() => setIsDownloadMenuOpen(!isDownloadMenuOpen)}
+                  className="flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-medium"
+                >
+                  <Download className="w-5 h-5" />
+                  <span>Download</span>
+                  <ChevronDown
+                    className={`w-4 h-4 ml-1 transition-transform ${isDownloadMenuOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {isDownloadMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-blue-100 overflow-hidden z-50">
+                    <button
+                      onClick={() => {
+                        handleDownloadCsv();
+                        setIsDownloadMenuOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center gap-3 transition border-b border-gray-50"
+                    >
+                      <div className="bg-blue-100 p-2 rounded-lg">
+                        <Database className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800 text-sm">
+                          Full Database
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Current molecular predictions (CSV)
+                        </p>
+                      </div>
+                    </button>
+
+                    <a
+                      href={TRAINING_DATA_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center gap-3 transition"
+                      onClick={() => setIsDownloadMenuOpen(false)}
+                    >
+                      <div className="bg-indigo-100 p-2 rounded-lg">
+                        <FileText className="w-5 h-5 text-indigo-600" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800 text-sm">
+                          Training Data
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Original model development dataset
+                        </p>
+                      </div>
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
