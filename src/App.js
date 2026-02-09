@@ -17,7 +17,6 @@ import {
   Network,
   FlaskConical,
   Activity,
-  Atom,
   RefreshCw,
   Download,
   ChevronDown,
@@ -158,102 +157,187 @@ const HomePage = ({
   handleSearchClick,
   molecules,
 }) => (
-  <div className="max-w-5xl mx-auto text-center py-8">
-    {isLoading && (
-      <div className="fixed top-20 right-6 bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 z-50">
-        <RefreshCw className="w-5 h-5 animate-spin" />
-        <span className="font-medium">Syncing with Neon Database...</span>
+  <div className="w-full bg-slate-50 min-h-screen flex flex-col">
+    {/* Scientific Hero Section */}
+    <div className="bg-slate-900 relative overflow-hidden text-white py-20 px-4 shadow-xl">
+      {/* Abstract Background Decoration */}
+      <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+        <Network className="w-96 h-96 transform rotate-12" />
       </div>
-    )}
-    <div className="flex items-center justify-center mb-4">
-      <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-4 rounded-2xl shadow-lg">
-        <Brain className="w-20 h-20 text-white" />
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        {isLoading && (
+          <div className="absolute top-0 right-0 flex items-center gap-2 bg-blue-600/20 backdrop-blur border border-blue-500/30 px-3 py-1 rounded-full text-sm text-blue-200 animate-pulse">
+            <RefreshCw className="w-3 h-3 animate-spin" />
+            Syncing data...
+          </div>
+        )}
+
+        {/* Logo & Intro */}
+        <div className="flex flex-col md:flex-row md:items-end gap-6 mb-10">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Brain className="w-8 h-8 text-blue-400" />
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                BrainRoute<span className="text-blue-400">DB</span>
+              </h1>
+            </div>
+            <p className="text-slate-400 text-lg max-w-2xl font-light">
+              A curated repository of Blood-Brain Barrier (BBB) permeability
+              predictions and molecular descriptors powered by artificial
+              intelligence.
+            </p>
+          </div>
+        </div>
+
+        {/* Search Box - Scientific Style */}
+        <div className="bg-white p-2 rounded-lg shadow-xl max-w-4xl">
+          <div className="relative flex items-center">
+            <div className="absolute left-4 text-slate-400">
+              <Search className="w-5 h-5" />
+            </div>
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={handleSearchKeyPress}
+              placeholder="Search by compound name, SMILES string, or ID..."
+              className="w-full pl-12 pr-32 py-4 text-slate-900 bg-transparent text-lg focus:outline-none font-mono placeholder:font-sans placeholder:text-slate-400"
+            />
+            <button
+              onClick={handleSearchClick}
+              className="absolute right-2 bg-blue-700 text-white px-8 py-2.5 rounded-md hover:bg-blue-800 transition font-medium text-sm tracking-wide uppercase"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 flex gap-4 text-sm text-slate-500 font-mono">
+          <span>Try:</span>
+          <button
+            className="hover:text-blue-400 underline decoration-dotted transition"
+            onClick={() => setSearchInput("Aspirin")}
+          >
+            Aspirin
+          </button>
+          <span className="text-slate-700">|</span>
+          <button
+            className="hover:text-blue-400 underline decoration-dotted transition"
+            onClick={() => setSearchInput("C20H25N3O")}
+          >
+            C20H25N3O
+          </button>
+        </div>
       </div>
     </div>
-    <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-      BrainRoute Database
-    </h1>
-    <p className="text-2xl text-gray-600 mb-4">
-      Molecular Intelligence Platform
-    </p>
-    <p className="text-lg text-gray-500 mb-12 max-w-2xl mx-auto">
-      Explore BBB-permeable molecules with AI-powered predictions and
-      comprehensive molecular data
-    </p>
 
-    <div className="max-w-3xl mx-auto mb-16">
-      <div className="relative">
-        <input
-          type="text"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          onKeyDown={handleSearchKeyPress}
-          placeholder="Search by molecule name, SMILES, or ID..."
-          className="w-full px-8 py-5 text-lg border-2 border-blue-200 rounded-full focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 pr-16 shadow-md transition"
-        />
-        <button
-          onClick={handleSearchClick}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-full hover:from-blue-600 hover:to-indigo-700 transition shadow-lg"
-        >
-          <Search className="w-6 h-6" />
-        </button>
+    {/* Data Summary Strip */}
+    <div className="bg-white border-b border-slate-200 shadow-sm relative z-20">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100">
+          <div className="py-4 px-6 text-center md:text-left">
+            <p className="text-2xl font-bold text-slate-800 tabular-nums">
+              {molecules.length.toLocaleString()}
+            </p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">
+              Compounds
+            </p>
+          </div>
+          <div className="py-4 px-6 text-center md:text-left">
+            <p className="text-2xl font-bold text-slate-800 tabular-nums">8</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">
+              Physicochemical Props
+            </p>
+          </div>
+          <div className="py-4 px-6 text-center md:text-left hidden md:block">
+            <div className="flex items-center gap-2">
+              <p className="text-2xl font-bold text-slate-800">KNN/LGBM/ET</p>
+            </div>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">
+              Model Architecture
+            </p>
+          </div>
+          <div className="py-4 px-6 text-center md:text-left flex items-center justify-center md:justify-start gap-3">
+            <div className="relative">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-green-500 rounded-full absolute top-0 animate-ping opacity-50"></div>
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-700">Online</p>
+              <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
+                System Status
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-      <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-blue-100 hover:border-blue-300 transition hover:shadow-xl">
-        <div className="bg-gradient-to-br from-blue-100 to-indigo-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto">
-          <Database className="w-8 h-8 text-blue-600" />
+    {/* Main Content Area */}
+    <div className="max-w-6xl mx-auto px-4 py-12 flex-grow w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Scientific Card 1 */}
+        <div className="bg-white p-6 rounded-lg border border-slate-200 hover:border-blue-400 transition-all hover:shadow-lg group">
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-blue-50 p-3 rounded-lg text-blue-700 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+              <Database className="w-6 h-6" />
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 mb-2 font-sans">
+            Data Repository
+          </h3>
+          <p className="text-slate-600 text-sm leading-relaxed mb-4">
+            Access the full index of small molecules. Dataset includes computed
+            physiochemical properties, BBB permeability status, and confidence
+            scores.
+          </p>
+          <div className="text-xs font-mono text-slate-400 border-t pt-3 border-slate-100">
+            Updated: {new Date().toLocaleDateString()}
+          </div>
         </div>
-        <h3 className="text-xl font-bold mb-3 text-gray-800">
-          Comprehensive Database
-        </h3>
-        <p className="text-gray-600">
-          Access detailed molecular information and therapeutic properties
-        </p>
-      </div>
-      <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-indigo-100 hover:border-indigo-300 transition hover:shadow-xl">
-        <div className="bg-gradient-to-br from-indigo-100 to-purple-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto">
-          <Search className="w-8 h-8 text-indigo-600" />
-        </div>
-        <h3 className="text-xl font-bold mb-3 text-gray-800">Smart Search</h3>
-        <p className="text-gray-600">
-          Advanced search by name, SMILES notation, or unique identifiers
-        </p>
-      </div>
-      <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-purple-100 hover:border-purple-300 transition hover:shadow-xl">
-        <div className="bg-gradient-to-br from-purple-100 to-pink-100 w-16 h-16 rounded-xl flex items-center justify-center mb-4 mx-auto">
-          <Network className="w-8 h-8 text-purple-600" />
-        </div>
-        <h3 className="text-xl font-bold mb-3 text-gray-800">
-          Structure Visualization
-        </h3>
-        <p className="text-gray-600">
-          Interactive molecular structures with detailed property analysis
-        </p>
-      </div>
-    </div>
 
-    <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
-        <FlaskConical className="w-8 h-8 text-blue-600 mb-2 mx-auto" />
-        <p className="text-2xl font-bold text-blue-600">{molecules.length}+</p>
-        <p className="text-sm text-gray-600">Molecules</p>
-      </div>
-      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200">
-        <Activity className="w-8 h-8 text-indigo-600 mb-2 mx-auto" />
-        <p className="text-2xl font-bold text-indigo-600">Real-time</p>
-        <p className="text-sm text-gray-600">Updates</p>
-      </div>
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
-        <Atom className="w-8 h-8 text-purple-600 mb-2 mx-auto" />
-        <p className="text-2xl font-bold text-purple-600">Advanced</p>
-        <p className="text-sm text-gray-600">Analytics</p>
-      </div>
-      <div className="bg-gradient-to-br from-pink-50 to-blue-50 p-6 rounded-xl border border-pink-200">
-        <Brain className="w-8 h-8 text-pink-600 mb-2 mx-auto" />
-        <p className="text-2xl font-bold text-pink-600">AI-Powered</p>
-        <p className="text-sm text-gray-600">Predictions</p>
+        {/* Scientific Card 2 */}
+        <div className="bg-white p-6 rounded-lg border border-slate-200 hover:border-indigo-400 transition-all hover:shadow-lg group">
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-indigo-50 p-3 rounded-lg text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+              <Activity className="w-6 h-6" />
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-colors" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 mb-2 font-sans">
+            Prediction Engine
+          </h3>
+          <p className="text-slate-600 text-sm leading-relaxed mb-4">
+            Models trained on diverse chemical spaces utilize consensus voting
+            from K-Nearest Neighbors, LGBM, and Extra Trees Classifier to
+            predict permeability.
+          </p>
+          <div className="text-xs font-mono text-slate-400 border-t pt-3 border-slate-100">
+            F1: ~94% Accuracy: ~94% (On External unseen data)
+          </div>
+        </div>
+
+        {/* Scientific Card 3 */}
+        <div className="bg-white p-6 rounded-lg border border-slate-200 hover:border-purple-400 transition-all hover:shadow-lg group">
+          <div className="flex items-center justify-between mb-4">
+            <div className="bg-purple-50 p-3 rounded-lg text-purple-700 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+              <Network className="w-6 h-6" />
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-purple-500 transition-colors" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 mb-2 font-sans">
+            Cheminformatics
+          </h3>
+          <p className="text-slate-600 text-sm leading-relaxed mb-4">
+            Integrated RDKit visualization for 2D structure rendering, subgraph
+            matching, and automated descriptor calculation.
+          </p>
+          <div className="text-xs font-mono text-slate-400 border-t pt-3 border-slate-100">
+            Lib: RDKit-JS 2024.03
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -268,126 +352,154 @@ const SearchResults = ({
   viewMoleculeDetail,
   handleDownloadCsv,
 }) => (
-  <div>
-    <div className="mb-8">
-      <div className="max-w-4xl">
-        <div className="relative">
+  <div className="flex flex-col w-full">
+    {/* Search Panel - Full Width Sticky White Theme */}
+    <div className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 py-4 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6">
+        <label className="text-slate-500 text-xs font-bold mb-2 block uppercase tracking-wider flex items-center gap-2">
+          <Search className="w-3 h-3" />
+          Molecular Query Engine
+        </label>
+        <div className="relative flex items-center">
+          <div className="absolute left-0 top-0 bottom-0 pl-4 flex items-center pointer-events-none z-10">
+            <Search className="w-5 h-5 text-slate-400" />
+          </div>
           <input
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={handleSearchKeyPress}
-            placeholder="Search by molecule name, SMILES, or ID..."
-            className="w-full px-8 py-4 text-lg border-2 border-blue-200 rounded-full focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 pr-16 shadow-md"
+            placeholder="Search by ID, name, or SMILES..."
+            className="w-full pl-12 pr-32 py-3 bg-white border-2 border-slate-900 rounded-lg text-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all placeholder-slate-400 font-mono text-lg shadow-sm"
           />
           <button
             onClick={handleSearchClick}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-full hover:from-blue-600 hover:to-indigo-700 transition shadow-lg"
+            className="absolute right-1.5 top-1.5 bottom-1.5 bg-slate-900 hover:bg-blue-700 text-white px-6 rounded-md text-sm font-bold transition uppercase tracking-wide shadow-md"
           >
-            <Search className="w-5 h-5" />
+            Refine
           </button>
         </div>
       </div>
     </div>
 
-    <div className="mb-6 flex items-center justify-between">
-      <h2 className="text-3xl font-bold text-gray-800">
-        Search Results
-        <span className="text-lg font-normal text-blue-600 ml-3 bg-blue-50 px-4 py-1 rounded-full">
-          {filteredMolecules.length} molecules found
-        </span>
-      </h2>
-      <button
-        onClick={handleDownloadCsv}
-        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
-      >
-        <Download className="w-4 h-4" />
-        Export CSV
-      </button>
-    </div>
-
-    {filteredMolecules.length === 0 ? (
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-16 text-center border-2 border-blue-100">
-        <Search className="w-20 h-20 text-blue-300 mx-auto mb-6" />
-        <h3 className="text-2xl font-bold text-gray-700 mb-3">
-          No molecules found
-        </h3>
-        <p className="text-gray-500 text-lg">
-          Try a different search term or browse all molecules
-        </p>
+    {/* Results Stats Bar */}
+    <div className="w-full max-w-7xl mx-auto px-6 mt-8">
+      <div className="flex items-center justify-between items-end border-b border-gray-200 pb-3 mb-5">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            Search Results
+            <span className="bg-slate-100 text-slate-600 text-xs py-0.5 px-2 rounded-full border border-slate-200">
+              {filteredMolecules.length}
+            </span>
+          </h2>
+        </div>
+        <button
+          onClick={handleDownloadCsv}
+          className="flex items-center gap-2 text-slate-600 hover:text-blue-600 border border-slate-200 hover:border-blue-400 px-4 py-2 rounded-lg bg-white transition shadow-sm text-xs font-bold uppercase tracking-wide"
+        >
+          <Download className="w-4 h-4" />
+          Export CSV
+        </button>
       </div>
-    ) : (
-      <div className="grid grid-cols-1 gap-4">
-        {filteredMolecules.map((molecule) => (
-          <div
-            key={molecule.id}
-            onClick={() => viewMoleculeDetail(molecule)}
-            className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition cursor-pointer border border-blue-100 hover:border-blue-300"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex gap-4 flex-1">
-                <div className="flex-shrink-0">
-                  <MoleculeStructure smiles={molecule.smiles} size="small" />
+
+      {filteredMolecules.length === 0 ? (
+        <div className="bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 p-16 text-center shadow-sm">
+          <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
+            <Search className="w-8 h-8 text-slate-300" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-700 mb-2">
+            No matching molecules found
+          </h3>
+          <p className="text-slate-500 text-sm max-w-md mx-auto">
+            Try adjusting your search terms, filtering by specific properties,
+            or checking the spelling of your query.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-3 pb-12">
+          {filteredMolecules.map((molecule) => (
+            <div
+              key={molecule.id}
+              onClick={() => viewMoleculeDetail(molecule)}
+              className="group bg-white rounded-lg border border-slate-200 p-4 hover:border-blue-400 hover:shadow-lg transition-all cursor-pointer flex gap-6 items-center"
+            >
+              {/* Structure Thumbnail - Optimized Size */}
+              <div className="flex-shrink-0 bg-white border border-slate-100 rounded-md p-1 w-24 h-24 flex items-center justify-center shadow-sm group-hover:border-blue-100 transition">
+                <MoleculeStructure smiles={molecule.smiles} size="small" />
+              </div>
+
+              {/* Content Info */}
+              <div className="flex-grow min-w-0">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition truncate">
+                      {molecule.name}
+                    </h3>
+                    <span className="font-mono text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                      {molecule.id}
+                    </span>
+                  </div>
+                  <div
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold border whitespace-nowrap uppercase tracking-wider ${
+                      molecule.prediction === "BBB+"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                        : "bg-rose-50 text-rose-700 border-rose-100"
+                    }`}
+                  >
+                    {molecule.prediction === "BBB+"
+                      ? "Permeable"
+                      : "Non-Permeable"}
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">
-                    {molecule.name}
-                  </h3>
-                  <p className="text-xs text-blue-600 font-mono bg-blue-50 inline-block px-2 py-1 rounded mb-2">
-                    {molecule.id}
-                  </p>
-                  <div className="grid grid-cols-3 gap-3 mt-2">
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-2 rounded-lg border border-blue-100">
-                      <p className="text-xs text-blue-600 font-semibold">
-                        Formula
-                      </p>
-                      <p className="font-bold text-gray-900 text-sm">
-                        {molecule.formula}
-                      </p>
-                    </div>
-                    <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-2 rounded-lg border border-indigo-100">
-                      <p className="text-xs text-indigo-600 font-semibold">
-                        Weight
-                      </p>
-                      <p className="font-bold text-gray-900 text-sm">
-                        {molecule.weight} g/mol
-                      </p>
-                    </div>
-                    <div
-                      className={`bg-gradient-to-br p-2 rounded-lg border ${
-                        molecule.prediction === "BBB+"
-                          ? "from-green-50 to-emerald-50 border-green-200"
-                          : "from-red-50 to-rose-50 border-red-200"
-                      }`}
+
+                {/* Data Table Grid */}
+                <div className="grid grid-cols-4 gap-4 w-full">
+                  <div className="border-l-2 border-slate-100 pl-3">
+                    <p className="text-[9px] uppercase text-slate-400 font-bold tracking-wider mb-0.5">
+                      Formula
+                    </p>
+                    <p className="text-xs font-bold text-slate-700 truncate font-mono">
+                      {molecule.formula}
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-slate-100 pl-3">
+                    <p className="text-[9px] uppercase text-slate-400 font-bold tracking-wider mb-0.5">
+                      Weight
+                    </p>
+                    <p className="text-xs font-bold text-slate-700 truncate font-mono">
+                      {molecule.weight}
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-slate-100 pl-3">
+                    <p className="text-[9px] uppercase text-slate-400 font-bold tracking-wider mb-0.5">
+                      Conf.
+                    </p>
+                    <p className="text-xs font-bold text-slate-700 font-mono">
+                      {molecule.confidence}%
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-slate-100 pl-3">
+                    <p className="text-[9px] uppercase text-slate-400 font-bold tracking-wider mb-0.5">
+                      SMILES
+                    </p>
+                    <p
+                      className="text-[10px] text-slate-500 font-mono truncate max-w-[200px]"
+                      title={molecule.smiles}
                     >
-                      <p
-                        className={`text-xs font-semibold ${
-                          molecule.prediction === "BBB+"
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      >
-                        Prediction
-                      </p>
-                      <p
-                        className={`font-bold text-sm ${
-                          molecule.prediction === "BBB+"
-                            ? "text-green-700"
-                            : "text-red-700"
-                        }`}
-                      >
-                        {molecule.prediction}
-                      </p>
-                    </div>
+                      {molecule.smiles}
+                    </p>
                   </div>
                 </div>
               </div>
-              <ChevronRight className="w-6 h-6 text-blue-400 flex-shrink-0" />
+
+              <div className="h-full flex items-center pl-2">
+                <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition transform group-hover:translate-x-1" />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    )}
+          ))}
+        </div>
+      )}
+    </div>
   </div>
 );
 
@@ -399,170 +511,177 @@ const MoleculeDetail = ({ molecules }) => {
   if (!selectedMolecule) {
     return (
       <div className="text-center p-16">
-        <h2 className="text-2xl font-bold">Molecule not found</h2>
+        <h2 className="text-2xl font-bold text-slate-900">
+          Molecule not found
+        </h2>
         <button
           onClick={() => navigate("/search")}
-          className="mt-4 text-blue-600"
+          className="mt-4 text-blue-600 font-medium hover:underline"
         >
-          Go back to search
+          Return to directory
         </button>
       </div>
     );
   }
 
+  const DetailItem = ({ label, value, unit = "", color = "blue" }) => {
+    const theme =
+      {
+        blue: "border-blue-200 text-blue-600",
+        indigo: "border-indigo-200 text-indigo-600",
+        purple: "border-purple-200 text-purple-600",
+        pink: "border-pink-200 text-pink-600",
+        emerald: "border-emerald-200 text-emerald-600",
+        amber: "border-amber-200 text-amber-600",
+        cyan: "border-cyan-200 text-cyan-600",
+      }[color] || "border-slate-200 text-slate-500";
+
+    // Extract border and text classes safely
+    const [borderColor, textColor] = theme.split(" ");
+
+    return (
+      <div
+        className={`bg-white p-4 rounded-lg border-2 ${borderColor} shadow-sm hover:shadow-md transition-shadow`}
+      >
+        <p
+          className={`text-xs font-bold uppercase tracking-wider mb-1 ${textColor}`}
+        >
+          {label}
+        </p>
+        <p className="text-lg font-bold text-slate-900">
+          {value} {unit}
+        </p>
+      </div>
+    );
+  };
+
   return (
-    <div>
+    <div className="max-w-5xl mx-auto">
       <button
         onClick={() => navigate("/search")}
-        className="mb-8 text-blue-600 hover:text-blue-700 flex items-center gap-2 font-semibold text-lg bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-100 transition"
+        className="mb-6 text-slate-500 hover:text-blue-600 flex items-center gap-2 font-medium text-sm transition group"
       >
-        <ChevronRight className="w-5 h-5 transform rotate-180" />
-        Back to results
+        <ChevronRight className="w-4 h-4 transform rotate-180 group-hover:-translate-x-1 transition" />
+        Back to Results
       </button>
 
-      <div className="bg-white rounded-2xl shadow-2xl p-10 border-2 border-blue-100">
-        <div className="mb-8">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-3">
-            {selectedMolecule.name}
-          </h1>
-          <div className="flex items-center gap-3">
-            <p className="text-xl text-blue-600 font-mono bg-blue-50 inline-block px-4 py-2 rounded-full">
-              {selectedMolecule.id}
-            </p>
-            <span
-              className={`px-4 py-2 rounded-full text-sm font-bold ${
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        {/* Header Section */}
+        <div className="p-8 border-b border-slate-200 bg-slate-50/50">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                {selectedMolecule.name}
+              </h1>
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-sm text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded">
+                  ID: {selectedMolecule.id}
+                </span>
+                <span
+                  className={`px-3 py-1 rounded text-sm font-bold border ${
+                    selectedMolecule.prediction === "BBB+"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-rose-50 text-rose-700 border-rose-200"
+                  }`}
+                >
+                  {selectedMolecule.prediction}
+                </span>
+                <span className="text-slate-400 text-sm">|</span>
+                <span className="text-slate-600 font-medium text-sm">
+                  {selectedMolecule.confidence}% Confidence
+                </span>
+              </div>
+            </div>
+
+            {/* Status Badge */}
+            <div
+              className={`px-4 py-2 rounded-full text-sm font-bold border flex items-center gap-2 shadow-sm ${
                 selectedMolecule.prediction === "BBB+"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                  ? "bg-white text-emerald-700 border-emerald-200"
+                  : "bg-white text-rose-700 border-rose-200"
               }`}
             >
-              {selectedMolecule.prediction} • {selectedMolecule.confidence}%
-              confidence
-            </span>
-            {/* <span
-              className={`px-4 py-2 rounded-full text-sm font-bold ${
-                selectedMolecule.uncertainty < 50
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {selectedMolecule.uncertainty.toFixed(2)}% uncertainty
-            </span> */}
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  selectedMolecule.prediction === "BBB+"
+                    ? "bg-emerald-500"
+                    : "bg-rose-500"
+                }`}
+              />
+              {selectedMolecule.prediction === "BBB+"
+                ? "Permeable"
+                : "Non-Permeable"}
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 mb-10">
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-              <Network className="w-6 h-6 text-blue-600" />
-              2D Structure
-            </h2>
-            <MoleculeStructure smiles={selectedMolecule.smiles} size="large" />
-            <div className="mt-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-              <p className="text-sm text-gray-600 font-semibold mb-2">
-                SMILES Notation
-              </p>
-              <p className="font-mono text-xs text-gray-900 break-all">
+        <div className="p-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* Structure Column */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-white border border-slate-200 rounded-lg p-2 shadow-sm">
+              <MoleculeStructure
+                smiles={selectedMolecule.smiles}
+                size="large"
+              />
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <div className="flex items-center gap-2 mb-2 text-slate-900 font-medium">
+                <Network className="w-4 h-4 text-blue-600" />
+                <span>SMILES Structure</span>
+              </div>
+              <p className="font-mono text-xs text-slate-600 break-all bg-white p-3 rounded border border-slate-200">
                 {selectedMolecule.smiles}
               </p>
             </div>
           </div>
 
-          <div className="lg:col-span-3">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
-              <Activity className="w-6 h-6 text-purple-600" />
-              Molecular Properties
+          {/* Properties Column */}
+          <div className="lg:col-span-7">
+            <h2 className="text-lg font-bold mb-6 text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
+              <Activity className="w-5 h-5 text-blue-600" />
+              Physicochemical Properties
             </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200">
-                <p className="text-sm text-blue-600 font-semibold mb-2">
-                  Molecular Weight
-                </p>
-                <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.weight} g/mol
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl border-2 border-indigo-200">
-                <p className="text-sm text-indigo-600 font-semibold mb-2">
-                  LogP
-                </p>
-                <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.logP}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border-2 border-purple-200">
-                <p className="text-sm text-purple-600 font-semibold mb-2">
-                  H-Bond Donors
-                </p>
-                <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.hbd}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-pink-50 to-red-50 p-4 rounded-xl border-2 border-pink-200">
-                <p className="text-sm text-pink-600 font-semibold mb-2">
-                  H-Bond Acceptors
-                </p>
-                <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.hba}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-green-200">
-                <p className="text-sm text-green-600 font-semibold mb-2">
-                  TPSA
-                </p>
-                <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.tpsa} Ų
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-xl border-2 border-yellow-200">
-                <p className="text-sm text-yellow-600 font-semibold mb-2">
-                  Rotatable Bonds
-                </p>
-                <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.rotatable_bonds}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-4 rounded-xl border-2 border-cyan-200">
-                <p className="text-sm text-cyan-600 font-semibold mb-2">
-                  Heavy Atoms
-                </p>
-                <p className="text-xl font-bold text-gray-900">
-                  {selectedMolecule.heavy_atoms}
-                </p>
-              </div>
-            </div>
 
-            {/* <div className="mt-6">
-              <h3 className="text-lg font-bold mb-4 text-gray-800">
-                Physical Properties
-              </h3>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                  <p className="text-sm text-gray-600 font-semibold">
-                    Melting Point
-                  </p>
-                  <p className="text-gray-900 font-medium">
-                    {selectedMolecule.properties.meltingPoint}
-                  </p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                  <p className="text-sm text-gray-600 font-semibold">
-                    Boiling Point
-                  </p>
-                  <p className="text-gray-900 font-medium">
-                    {selectedMolecule.properties.boilingPoint}
-                  </p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                  <p className="text-sm text-gray-600 font-semibold">
-                    Solubility
-                  </p>
-                  <p className="text-gray-900 font-medium">
-                    {selectedMolecule.properties.solubility}
-                  </p>
-                </div>
-              </div>
-            </div> */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <DetailItem
+                label="Molecular Weight"
+                value={selectedMolecule.weight}
+                unit="g/mol"
+                color="blue"
+              />
+              <DetailItem
+                label="LogP"
+                value={selectedMolecule.logP}
+                color="indigo"
+              />
+              <DetailItem
+                label="H-Bond Donors"
+                value={selectedMolecule.hbd}
+                color="purple"
+              />
+              <DetailItem
+                label="H-Bond Acceptors"
+                value={selectedMolecule.hba}
+                color="pink"
+              />
+              <DetailItem
+                label="TPSA"
+                value={selectedMolecule.tpsa}
+                unit="Å²"
+                color="emerald"
+              />
+              <DetailItem
+                label="Rotatable Bonds"
+                value={selectedMolecule.rotatable_bonds}
+                color="amber"
+              />
+              <DetailItem
+                label="Heavy Atoms"
+                value={selectedMolecule.heavy_atoms}
+                color="cyan"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -704,43 +823,43 @@ const AppContent = () => {
   }, [fetchFromDatabase]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-      <nav className="bg-white shadow-lg border-b-2 border-blue-100">
-        <div className="max-w-7xl mx-auto px-6 py-5">
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <nav className="bg-slate-900 shadow-lg border-b border-slate-700">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link
               to="/"
               className="flex items-center gap-3 hover:opacity-90 transition group"
             >
-              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl group-hover:scale-105 transition">
-                <Brain className="w-8 h-8 text-white" />
+              <div className="bg-slate-800 p-2 rounded-lg group-hover:bg-slate-700 transition border border-slate-700">
+                <Brain className="w-6 h-6 text-blue-400" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                BrainRoute-DB
+              <span className="text-xl font-bold text-white tracking-tight">
+                BrainRoute<span className="text-blue-400">DB</span>
               </span>
             </Link>
             <div className="flex items-center gap-6">
               <Link
                 to="/"
-                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition font-medium px-4 py-2 rounded-lg hover:bg-blue-50"
+                className="flex items-center gap-2 text-slate-300 hover:text-white transition font-medium px-4 py-2 rounded-lg hover:bg-slate-800"
               >
-                <Home className="w-5 h-5" />
+                <Home className="w-4 h-4" />
                 <span>Home</span>
               </Link>
               <Link
                 to="/search"
-                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition font-medium px-4 py-2 rounded-lg hover:bg-blue-50"
+                className="flex items-center gap-2 text-slate-300 hover:text-white transition font-medium px-4 py-2 rounded-lg hover:bg-slate-800"
               >
-                <Search className="w-5 h-5" />
+                <Search className="w-4 h-4" />
                 <span>Search</span>
               </Link>
 
               <div className="relative" ref={downloadMenuRef}>
                 <button
                   onClick={() => setIsDownloadMenuOpen(!isDownloadMenuOpen)}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition font-medium"
+                  className="flex items-center gap-2 bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition font-medium text-sm shadow-md"
                 >
-                  <Download className="w-5 h-5" />
+                  <Download className="w-4 h-4" />
                   <span>Download</span>
                   <ChevronDown
                     className={`w-4 h-4 ml-1 transition-transform ${isDownloadMenuOpen ? "rotate-180" : ""}`}
@@ -748,22 +867,22 @@ const AppContent = () => {
                 </button>
 
                 {isDownloadMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-blue-100 overflow-hidden z-50">
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-slate-200 overflow-hidden z-50 ring-1 ring-black ring-opacity-5">
                     <button
                       onClick={() => {
                         handleDownloadCsv();
                         setIsDownloadMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center gap-3 transition border-b border-gray-50"
+                      className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3 transition border-b border-slate-100"
                     >
-                      <div className="bg-blue-100 p-2 rounded-lg">
+                      <div className="bg-blue-50 p-2 rounded-md">
                         <Database className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-800 text-sm">
+                        <p className="font-semibold text-slate-800 text-sm">
                           Full Database
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-500">
                           Current molecular predictions (CSV)
                         </p>
                       </div>
@@ -773,17 +892,17 @@ const AppContent = () => {
                       href={TRAINING_DATA_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center gap-3 transition"
+                      className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3 transition"
                       onClick={() => setIsDownloadMenuOpen(false)}
                     >
-                      <div className="bg-indigo-100 p-2 rounded-lg">
+                      <div className="bg-indigo-50 p-2 rounded-md">
                         <FileText className="w-5 h-5 text-indigo-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-800 text-sm">
+                        <p className="font-semibold text-slate-800 text-sm">
                           Training Data
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-slate-500">
                           Original model development dataset
                         </p>
                       </div>
@@ -796,7 +915,7 @@ const AppContent = () => {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 w-full flex-grow">
+      <main className="w-full flex-grow">
         <Routes>
           <Route
             path="/"
@@ -827,22 +946,29 @@ const AppContent = () => {
           />
           <Route
             path="/molecule/:moleculeId"
-            element={<MoleculeDetail molecules={molecules} />}
+            element={
+              <div className="max-w-7xl mx-auto px-6 py-8">
+                <MoleculeDetail molecules={molecules} />
+              </div>
+            }
           />
         </Routes>
       </main>
 
-      <footer className="bg-white border-t-2 border-blue-100 mt-12">
+      <footer className="bg-white border-t border-slate-200 mt-auto">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="flex items-center justify-between text-sm text-gray-600">
+          <div className="flex items-center justify-between text-sm text-slate-500">
             <p className="font-medium">
-              © 2025 BrainRoute-DB | by BrainRoute team. All rights reserved.
+              © 2025 BrainRouteDB | by BrainRoute team @ Omics-Codeathon.
             </p>
-            <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full">
+            <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
               <Info className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-600 font-medium">
+              <span className="text-slate-600 font-medium">
                 Integrated with{" "}
-                <a href="https://huggingface.co/spaces/Nnobody/brainroute">
+                <a
+                  href="https://brainroute.streamlit.app/"
+                  className="text-blue-600 hover:underline"
+                >
                   BrainRoute Platform
                 </a>
               </span>
