@@ -21,7 +21,12 @@ import {
   Download,
   ChevronDown,
   FileText,
+  Mail,
+  Users,
 } from "lucide-react";
+
+import About from "./About";
+import Contact from "./Contact";
 
 // Mock data - will be replaced with Google Sheets API data
 const mockMolecules = [
@@ -853,6 +858,20 @@ const AppContent = () => {
                 <Search className="w-4 h-4" />
                 <span>Search</span>
               </Link>
+              <Link
+                to="/about"
+                className="flex items-center gap-2 text-slate-300 hover:text-white transition font-medium px-4 py-2 rounded-lg hover:bg-slate-800"
+              >
+                <Users className="w-4 h-4" />
+                <span>About</span>
+              </Link>
+              <Link
+                to="/contact"
+                className="flex items-center gap-2 text-slate-300 hover:text-white transition font-medium px-4 py-2 rounded-lg hover:bg-slate-800"
+              >
+                <Mail className="w-4 h-4" />
+                <span>Contact</span>
+              </Link>
 
               <div className="relative" ref={downloadMenuRef}>
                 <button
@@ -952,6 +971,8 @@ const AppContent = () => {
               </div>
             }
           />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>
 
