@@ -28,6 +28,13 @@ import {
 import About from "./About";
 import Contact from "./Contact";
 
+const formatCompoundsCount = (moleculeCount) => {
+  const total = Number(moleculeCount || 0) + 10032;
+  const thousands = total / 1000;
+  const rounded = Math.round(thousands * 10) / 10;
+  return `${rounded.toFixed(1)}k+`;
+};
+
 // Mock data - will be replaced with Google Sheets API data
 const mockMolecules = [
   {
@@ -243,7 +250,7 @@ const HomePage = ({
         <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100">
           <div className="py-4 px-6 text-center md:text-left">
             <p className="text-2xl font-bold text-slate-800 tabular-nums">
-              {molecules.length.toLocaleString()}
+              {formatCompoundsCount(molecules.length)}
             </p>
             <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">
               Compounds
