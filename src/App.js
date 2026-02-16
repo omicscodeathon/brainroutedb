@@ -987,7 +987,7 @@ const AppContent = () => {
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between text-sm text-slate-500">
             <p className="font-medium">
-              © 2025 BrainRouteDB | by BrainRoute team @ Omics-Codeathon.
+              © 2026 BrainRouteDB | by BrainRoute team @ Omics-Codeathon.
             </p>
             <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
               <Info className="w-4 h-4 text-blue-600" />

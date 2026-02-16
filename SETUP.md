@@ -190,4 +190,4 @@ The backend must be hosted publicly to be accessible by the live frontend.
 
 ## License
 
-© 2025 BrainRoute-DB. All rights reserved.
+© 2026 BrainRoute-DB. All rights reserved.
