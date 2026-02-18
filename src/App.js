@@ -712,9 +712,8 @@ const AppContent = () => {
   const downloadMenuRef = useRef(null);
   const navigate = useNavigate();
 
-  //  Update this link with the actual training data location
-  const TRAINING_DATA_URL =
-    "https://github.com/omicscodeathon/brainroute/tree/main/data";
+  //   link to the actual training data location
+  const TRAINING_DATA_URL = "/final_data.zip";
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -894,7 +893,7 @@ const AppContent = () => {
                 </button>
 
                 {isDownloadMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-slate-200 overflow-hidden z-50 ring-1 ring-black ring-opacity-5">
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-slate-200 overflow-hidden z-[100] ring-1 ring-black ring-opacity-5">
                     <button
                       onClick={() => {
                         handleDownloadCsv();
@@ -917,8 +916,7 @@ const AppContent = () => {
 
                     <a
                       href={TRAINING_DATA_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      download
                       className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3 transition"
                       onClick={() => setIsDownloadMenuOpen(false)}
                     >
