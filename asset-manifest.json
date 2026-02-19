@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/brainroutedb/static/css/main.8dc638b0.css",
-    "main.js": "/brainroutedb/static/js/main.c506fb9d.js",
+    "main.js": "/brainroutedb/static/js/main.a57909b9.js",
     "static/js/453.06b2d7f1.chunk.js": "/brainroutedb/static/js/453.06b2d7f1.chunk.js",
     "index.html": "/brainroutedb/index.html",
     "main.8dc638b0.css.map": "/brainroutedb/static/css/main.8dc638b0.css.map",
-    "main.c506fb9d.js.map": "/brainroutedb/static/js/main.c506fb9d.js.map",
+    "main.a57909b9.js.map": "/brainroutedb/static/js/main.a57909b9.js.map",
     "453.06b2d7f1.chunk.js.map": "/brainroutedb/static/js/453.06b2d7f1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.8dc638b0.css",
-    "static/js/main.c506fb9d.js"
+    "static/js/main.a57909b9.js"
   ]
 }
