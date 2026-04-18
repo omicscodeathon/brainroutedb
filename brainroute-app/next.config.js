@@ -2,8 +2,8 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/brainroutedb',
-  assetPrefix: '/brainroutedb/',
+  basePath: process.env.NODE_ENV === 'production' ? '/brainroutedb' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/brainroutedb/' : '',
   output: 'export',  // Required for static export to gh-pages
 }
 
