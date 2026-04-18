@@ -1,0 +1,36 @@
+#!/bin/bash
+# Quick Supabase Setup Script
+# Run this after creating your Supabase project
+
+echo "🚀 Supabase Molecules Setup"
+echo "================================"
+echo ""
+echo "STEP 1: Get Your Credentials"
+echo "  1. Go to https://supabase.com/dashboard"
+echo "  2. Open your project > Settings > API"
+echo "  3. Copy Project URL and anon public key"
+echo ""
+echo "STEP 2: Set Environment Variables"
+echo "  Run these in your terminal:"
+echo ""
+echo '  export SUPABASE_URL="your-project-url.supabase.co"'
+echo '  export SUPABASE_KEY="your-anon-public-key"'
+echo ""
+echo "STEP 3: Create Database Table"
+echo "  1. Go to SQL Editor in Supabase"
+echo "  2. Create new query"
+echo "  3. Copy contents from SUPABASE_SETUP.md SQL section"
+echo "  4. Click Run"
+echo ""
+echo "STEP 4: Upload Data"
+echo "  Run: python supabase_upload.py"
+echo ""
+echo "================================"
+echo "✅ Your data is now live!"
+echo ""
+echo "Use in frontend:"
+echo "  - Import supabase_frontend.js"
+echo "  - Use getLipinskiCompliant(), getDrugCandidates(), etc."
+echo "  - Or write custom queries with advancedQuery()"
+echo ""
+echo "Documentation: SUPABASE_SETUP.md"
