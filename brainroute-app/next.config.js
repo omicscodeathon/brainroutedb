@@ -1,7 +1,10 @@
+// brainroute-app/next.config.js
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
+  basePath: '/brainroutedb',
+  assetPrefix: '/brainroutedb/',
+  output: 'export',  // Required for static export to gh-pages
 }
 
 module.exports = nextConfig
