@@ -12,6 +12,20 @@ import { Header } from '@/src/components/Header'
 import { supabase } from '@/lib/supabase/client'
 import type { Molecule } from '@/lib/types'
 
+// Generate static pages for all molecules (runs at build time)
+export async function generateStaticParams() {
+  try {
+    const { getAllMoleculeIds } = await import('@/lib/queries/brainroute')
+    const ids = await getAllMoleculeIds()
+    return ids.map((id) => ({
+      id: String(id),
+    }))
+  } catch (error) {
+    console.error('Failed to generate static params:', error)
+    return []
+  }
+}
+
 export default function MoleculeDetailPage() {
   const params = useParams()
   const router = useRouter()

@@ -357,3 +357,23 @@ export async function getNumericRanges(): Promise<Record<string, { min: number; 
     return {}
   }
 }
+
+/**
+ * Get all molecule IDs for static generation
+ * Used by generateStaticParams() in the molecule detail page
+ */
+export async function getAllMoleculeIds(): Promise<number[]> {
+  try {
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select('id')
+
+    if (error) throw error
+    
+    return (data || []).map((row: { id: number }) => row.id)
+  } catch (error) {
+    console.error('Failed to get all molecule IDs:', error)
+    return []
+  }
+}
+
