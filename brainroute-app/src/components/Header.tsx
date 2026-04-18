@@ -26,6 +26,14 @@ export function Header() {
             >
               Verify Data
             </Link>
+            <a
+              href="https://brainroute.streamlit.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-black font-bold hover:text-blue-600 transition"
+            >
+              Prediction Tool
+            </a>
             <Link
               href="/about"
               className="text-black font-bold hover:text-blue-600 transition"

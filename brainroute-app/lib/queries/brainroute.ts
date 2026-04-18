@@ -178,6 +178,20 @@ export async function getFilteredCount(filters: FilterState): Promise<number> {
       query = query.lte('mw', filters.mw_max)
     }
 
+    if (filters.logp_min !== undefined) {
+      query = query.gte('logp', filters.logp_min)
+    }
+    if (filters.logp_max !== undefined) {
+      query = query.lte('logp', filters.logp_max)
+    }
+
+    if (filters.tpsa_min !== undefined) {
+      query = query.gte('tpsa', filters.tpsa_min)
+    }
+    if (filters.tpsa_max !== undefined) {
+      query = query.lte('tpsa', filters.tpsa_max)
+    }
+
     const { count, error } = await query
 
     if (error) throw error
