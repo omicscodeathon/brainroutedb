@@ -22,9 +22,8 @@ const COLUMNS_TO_DISPLAY = [
   'mw',
   'logp',
   'tpsa',
-  'lipinski_pass',
-  'veber_pass',
-  'pains_flag',
+  'cns_mpo',
+  'bbb_tag',
 ]
 
 export function DataPreview({ filters, pageSize = 15 }: DataPreviewProps) {
@@ -44,7 +43,7 @@ export function DataPreview({ filters, pageSize = 15 }: DataPreviewProps) {
         const response: DataPreviewResponse = await queryMolecules(
           filters,
           'id',
-          'asc',
+          'desc',
           page,
           pageSize
         )
@@ -62,6 +61,27 @@ export function DataPreview({ filters, pageSize = 15 }: DataPreviewProps) {
   }, [filters, page, pageSize])
 
   const totalPages = Math.ceil(total / pageSize)
+  const tagLabels: Record<string, string> = {
+    br_training: 'Training',
+    br_predicted: 'Predicted',
+    br_verified: 'Verified',
+  }
+
+  const renderTags = (tags?: string[] | null) => {
+    if (!tags || tags.length === 0) return null
+    return (
+      <span className="mt-1 flex flex-wrap gap-1">
+        {tags.map((tag) => (
+          <span
+            key={tag}
+            className="inline-flex items-center rounded border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"
+          >
+            {tagLabels[tag] || tag}
+          </span>
+        ))}
+      </span>
+    )
+  }
 
   const formatValue = (value: any, column: string, molecule?: Molecule): React.ReactNode => {
     if (value === null || value === undefined) return '—'
@@ -72,6 +92,7 @@ export function DataPreview({ filters, pageSize = 15 }: DataPreviewProps) {
           className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition"
         >
           {value}
+          {renderTags(molecule.tags)}
         </button>
       )
     }
@@ -83,8 +104,11 @@ export function DataPreview({ filters, pageSize = 15 }: DataPreviewProps) {
       if (column === 'mw' || column === 'tpsa') {
         return formatDecimal(value, 2)
       }
-      if (column === 'logp') {
+      if (column === 'logp' || column === 'logd') {
         return formatDecimal(value, 3)
+      }
+      if (column === 'cns_mpo') {
+        return formatDecimal(value, 1)
       }
       return String(value)
     }

@@ -15,6 +15,7 @@ import {
 } from './FilterComponents'
 import type { FilterState } from '@/lib/types'
 import { getFilterOptions, getNumericRanges } from '@/lib/queries/brainroute'
+import { formatBinName } from '@/lib/utils'
 
 interface FilterPanelProps {
   filters: FilterState
@@ -27,9 +28,9 @@ export function FilterPanel({
   onFiltersChange,
   isLoading = false,
 }: FilterPanelProps) {
-  const [polarityOptions, setPolarityOptions] = useState<Array<{ label: string; value: string }>>([])
-  const [lipophilicityOptions, setLipophilicityOptions] = useState<Array<{ label: string; value: string }>>([])
-  const [sizeOptions, setSizeOptions] = useState<Array<{ label: string; value: string }>>([])
+  const [tpsaOptions, setTpsaOptions] = useState<Array<{ label: string; value: string }>>([])
+  const [logpOptions, setLogpOptions] = useState<Array<{ label: string; value: string }>>([])
+  const [mwOptions, setMwOptions] = useState<Array<{ label: string; value: string }>>([])
   const [numericRanges, setNumericRanges] = useState<Record<string, { min: number; max: number }>>({})
   const [optionsLoading, setOptionsLoading] = useState(true)
 
@@ -42,21 +43,21 @@ export function FilterPanel({
           getNumericRanges(),
         ])
 
-        if (options.polarity_bin) {
-          setPolarityOptions(
-            options.polarity_bin.map((opt: string) => ({ label: opt, value: opt }))
+        if (options.tpsa_bin) {
+          setTpsaOptions(
+            options.tpsa_bin.map((opt: string) => ({ label: formatBinName(opt), value: opt }))
           )
         }
 
-        if (options.lipophilicity_bin) {
-          setLipophilicityOptions(
-            options.lipophilicity_bin.map((opt: string) => ({ label: opt, value: opt }))
+        if (options.logp_bin) {
+          setLogpOptions(
+            options.logp_bin.map((opt: string) => ({ label: formatBinName(opt), value: opt }))
           )
         }
 
-        if (options.size_bin) {
-          setSizeOptions(
-            options.size_bin.map((opt: string) => ({ label: opt, value: opt }))
+        if (options.mw_bin) {
+          setMwOptions(
+            options.mw_bin.map((opt: string) => ({ label: formatBinName(opt), value: opt }))
           )
         }
 
@@ -107,32 +108,39 @@ export function FilterPanel({
             placeholder="Molecule name..."
           />
 
+          <TextFilter
+            label="Search by SMILES"
+            value={filters.search_smiles || ''}
+            onChange={(value) => updateFilter('search_smiles', value || undefined)}
+            placeholder="SMILES string..."
+          />
+
           {/* Categorical Filters */}
           <div className="border-t border-gray-200 pt-4">
             <h3 className="text-sm font-semibold text-gray-900 mb-4">Classification</h3>
 
             <SelectFilter
-              label="Polarity"
-              value={filters.polarity_bin || ''}
-              onChange={(value) => updateFilter('polarity_bin', value || undefined)}
-              options={[{ label: 'All', value: 'all' }, ...polarityOptions]}
+              label="TPSA"
+              value={filters.tpsa_bin || ''}
+              onChange={(value) => updateFilter('tpsa_bin', value || undefined)}
+              options={[{ label: 'All', value: 'all' }, ...tpsaOptions]}
             />
 
             <div className="mt-4">
               <SelectFilter
-                label="Lipophilicity"
-                value={filters.lipophilicity_bin || ''}
-                onChange={(value) => updateFilter('lipophilicity_bin', value || undefined)}
-                options={[{ label: 'All', value: 'all' }, ...lipophilicityOptions]}
+                label="LogP"
+                value={filters.logp_bin || ''}
+                onChange={(value) => updateFilter('logp_bin', value || undefined)}
+                options={[{ label: 'All', value: 'all' }, ...logpOptions]}
               />
             </div>
 
             <div className="mt-4">
               <SelectFilter
-                label="Size"
-                value={filters.size_bin || ''}
-                onChange={(value) => updateFilter('size_bin', value || undefined)}
-                options={[{ label: 'All', value: 'all' }, ...sizeOptions]}
+                label="Molecular Weight"
+                value={filters.mw_bin || ''}
+                onChange={(value) => updateFilter('mw_bin', value || undefined)}
+                options={[{ label: 'All', value: 'all' }, ...mwOptions]}
               />
             </div>
           </div>

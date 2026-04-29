@@ -30,14 +30,21 @@ export function moleculesToCSV(molecules: Molecule[]): string {
     'peptide_like',
     'lipid_like',
     'aromatic',
-    'polarity_bin',
-    'lipophilicity_bin',
-    'size_bin',
+    'tpsa_bin',
+    'logp_bin',
+    'mw_bin',
     'lipinski_pass',
     'veber_pass',
     'egan_pass',
     'ghose_pass',
     'pains_flag',
+    'logd',
+    'cns_mpo',
+    'bbb_tag',
+    'prediction_confidence',
+    'tags',
+    'profile_json',
+    'created_at',
   ]
 
   // Create header row
@@ -48,20 +55,26 @@ export function moleculesToCSV(molecules: Molecule[]): string {
     return columns.map(col => {
       const value = (molecule as any)[col]
       
+      const csvValue = Array.isArray(value)
+        ? value.join('|')
+        : typeof value === 'object' && value !== null
+          ? JSON.stringify(value)
+          : value
+
       // Handle CSV escaping for strings with commas or quotes
-      if (typeof value === 'string') {
-        if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-          return `"${value.replace(/"/g, '""')}"`
+      if (typeof csvValue === 'string') {
+        if (csvValue.includes(',') || csvValue.includes('"') || csvValue.includes('\n')) {
+          return `"${csvValue.replace(/"/g, '""')}"`
         }
-        return value
+        return csvValue
       }
 
       // Handle null/undefined
-      if (value === null || value === undefined) {
+      if (csvValue === null || csvValue === undefined) {
         return ''
       }
 
-      return String(value)
+      return String(csvValue)
     }).join(',')
   })
 

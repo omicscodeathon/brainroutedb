@@ -191,17 +191,12 @@ export default function Home() {
               <h4 className="text-white font-semibold mb-4">Information</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="#" className="hover:text-white transition">
+                  <a href="/about" className="hover:text-white transition">
                     Documentation
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition">
-                    API
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition">
+                  <a href="/about" className="hover:text-white transition">
                     Contact
                   </a>
                 </li>
@@ -210,6 +205,7 @@ export default function Home() {
           </div>
           <div className="border-t border-gray-700 pt-8 text-center text-sm">
             <p>© 2026 BrainRoute. All rights reserved.</p>
+            <p className="mt-2 text-gray-400">Version 1</p>
           </div>
         </div>
       </footer>

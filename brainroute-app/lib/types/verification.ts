@@ -10,7 +10,7 @@ export interface VerificationSubmission {
   molecule_id?: number // If verifying existing molecule
   molecule_name?: string // If submitting new molecule
   smiles?: string // If submitting new molecule
-  paper_doi?: string // Optional - link to paper
+  paper_doi: string // Required - link to paper
   lab_name: string
   institution_name: string
   experiment_description: string

@@ -166,10 +166,19 @@ export async function linkVerificationToMolecule(
 
     if (updateError) throw updateError
 
-    // Update molecules table verification status
+    const { data: molecule } = await supabase
+      .from('molecules')
+      .select('tags')
+      .eq('id', moleculeId)
+      .single()
+
+    const currentTags = Array.isArray(molecule?.tags) ? molecule.tags : []
+    const tags = Array.from(new Set([...currentTags, 'br_verified']))
+
+    // Update molecules table verification tag
     const { error: moleculeError } = await supabase
       .from('molecules')
-      .update({ verification: 'br_user_verified' })
+      .update({ tags })
       .eq('id', moleculeId)
 
     if (moleculeError) throw moleculeError

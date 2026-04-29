@@ -33,9 +33,16 @@ export interface Molecule {
   aromatic: boolean | null
   
   // Classification bins
-  polarity_bin: string | null
-  lipophilicity_bin: string | null
-  size_bin: string | null
+  tpsa_bin: string | null
+  logp_bin: string | null
+  mw_bin: string | null
+  
+  // Brain properties
+  logd: number | null
+  cns_mpo: number | null
+  bbb_tag: string | null
+  tags: string[] | null
+  prediction_confidence: number | null
   
   // Drug candidacy flags
   lipinski_pass: boolean | null

@@ -34,6 +34,59 @@ export default function About() {
           </p>
         </section>
 
+        {/* Data Tags */}
+        <section className="bg-white rounded-lg shadow p-8">
+          <div className="flex gap-4 mb-6">
+            <Database className="h-8 w-8 text-blue-600 flex-shrink-0 mt-1" />
+            <h2 className="text-2xl font-bold text-gray-900">Molecule Tags</h2>
+          </div>
+          <p className="text-gray-700 leading-relaxed mb-6">
+            Tags describe where each molecule came from and how much review it has received on the platform.
+          </p>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h3 className="font-semibold text-gray-900 mb-2">Training</h3>
+              <p className="text-sm text-gray-700">
+                Molecules used to train the BrainRoute prediction models.
+              </p>
+            </div>
+            <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+              <h3 className="font-semibold text-gray-900 mb-2">Predicted</h3>
+              <p className="text-sm text-gray-700">
+                Molecules added after a user prediction from the BrainRoute Streamlit prediction tool.
+              </p>
+            </div>
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h3 className="font-semibold text-gray-900 mb-2">Verified</h3>
+              <p className="text-sm text-gray-700">
+                Molecules reviewed through the platform verification workflow using user-submitted experimental data.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* CNS MPO Score */}
+        <section className="bg-white rounded-lg shadow p-8">
+          <div className="flex gap-4 mb-6">
+            <Beaker className="h-8 w-8 text-blue-600 flex-shrink-0 mt-1" />
+            <h2 className="text-2xl font-bold text-gray-900">CNS MPO Score</h2>
+          </div>
+          <div className="space-y-4 text-gray-700">
+            <p>
+              The CNS MPO score is a multiparameter optimization score that summarizes how CNS-like a molecule is based on properties linked to brain exposure. Higher scores generally suggest a compound has a more favorable balance of physicochemical properties for central nervous system drug discovery.
+            </p>
+            <p>
+              In BrainRouteDB, the score is calculated from component scores for lipophilicity, molecular weight, topological polar surface area, hydrogen-bond donors, and ionization-related behavior. These components are combined into a single approximate CNS MPO score for quick comparison across molecules.
+            </p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-900 mb-2">Important Disclaimer</h3>
+              <p className="text-sm text-gray-700">
+                The original CNS MPO method uses measured or calculated LogD at physiological pH. BrainRouteDB does not currently calculate true LogD for every molecule in the database, so the platform uses available computed descriptors as a practical approximation. For newly predicted Streamlit molecules, LogD may fall back to LogP when a dedicated LogD calculation is unavailable. Treat this score as a screening aid, not as a replacement for experimental CNS exposure or full pharmacokinetic evaluation.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* How It Works */}
         <section className="bg-white rounded-lg shadow p-8">
           <div className="flex gap-4 mb-6">

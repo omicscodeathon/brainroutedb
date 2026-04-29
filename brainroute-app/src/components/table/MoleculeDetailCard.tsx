@@ -9,6 +9,7 @@ import React from 'react'
 import { X, Expand } from 'lucide-react'
 import type { Molecule } from '@/lib/types'
 import Link from 'next/link'
+import { buildMoleculeProfile } from '@/lib/utils/molecule-profile'
 
 interface MoleculeDetailCardProps {
   molecule: Molecule | null
@@ -18,14 +19,33 @@ interface MoleculeDetailCardProps {
 export function MoleculeDetailCard({ molecule, onClose }: MoleculeDetailCardProps) {
   if (!molecule) return null
 
-  const profile = molecule.profile_json as Record<string, any> || {}
+  const profile = buildMoleculeProfile(molecule)
+  const tagLabels: Record<string, string> = {
+    br_training: 'Training',
+    br_predicted: 'Predicted',
+    br_verified: 'Verified',
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">{molecule.name}</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">{molecule.name}</h2>
+            {molecule.tags && molecule.tags.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {molecule.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center rounded border border-blue-200 bg-white px-2.5 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {tagLabels[tag] || tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
           <div className="flex gap-2">
             <Link
               href={`/molecule/${molecule.id}`}
@@ -97,14 +117,38 @@ export function MoleculeDetailCard({ molecule, onClose }: MoleculeDetailCardProp
             </div>
           </div>
 
+          {/* BBB and CNS Properties */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Brain Properties</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: 'BBB Penetration', value: molecule.bbb_tag },
+                {
+                  label: 'Prediction Confidence',
+                  value: molecule.prediction_confidence !== null && molecule.prediction_confidence !== undefined
+                    ? `${Number(molecule.prediction_confidence).toFixed(1)}%`
+                    : null,
+                },
+                { label: 'CNS MPO Score', value: molecule.cns_mpo },
+              ].map(({ label, value }) => (
+                <div key={label}>
+                  <p className="text-xs font-medium text-gray-500 uppercase">{label}</p>
+                  <p className="mt-1 text-lg font-semibold text-gray-900">
+                    {value === null || value === undefined || value === '' ? '—' : value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Classification Bins */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Classification</h3>
             <div className="grid grid-cols-3 gap-4">
               {[
-                { label: 'Polarity', value: molecule.polarity_bin },
-                { label: 'Lipophilicity', value: molecule.lipophilicity_bin },
-                { label: 'Size', value: molecule.size_bin },
+                { label: 'TPSA', value: molecule.tpsa_bin },
+                { label: 'LogP', value: molecule.logp_bin },
+                { label: 'Molecular Weight', value: molecule.mw_bin },
               ].map(({ label, value }) => (
                 <div key={label}>
                   <p className="text-xs font-medium text-gray-500 uppercase">{label}</p>

@@ -15,9 +15,24 @@ interface VerificationFormProps {
   onSuccess?: () => void
 }
 
+const DOI_PATTERN = /^10\.\d{4,9}\/[-._;()/:A-Z0-9]+$/i
+
+function normalizeDoi(value: string): string {
+  return value
+    .trim()
+    .replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')
+    .replace(/^doi:\s*/i, '')
+    .trim()
+}
+
+function isValidDoi(value: string): boolean {
+  return DOI_PATTERN.test(normalizeDoi(value))
+}
+
 export function VerificationForm({ onSuccess }: VerificationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [doiWarning, setDoiWarning] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
 
@@ -37,6 +52,14 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
+    if (name === 'paper_doi') {
+      const cleanDoi = normalizeDoi(value)
+      setDoiWarning(
+        cleanDoi && !isValidDoi(cleanDoi)
+          ? 'Please enter a valid DOI, for example 10.1038/s41586-020-2649-2.'
+          : null
+      )
+    }
     setFormData(prev => ({
       ...prev,
       [name]: value,
@@ -73,6 +96,16 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
     setSuccess(false)
 
     // Validation - make sure required fields are filled
+    const cleanDoi = normalizeDoi(formData.paper_doi || '')
+    if (!cleanDoi) {
+      setError('Paper DOI is required')
+      return
+    }
+    if (!isValidDoi(cleanDoi)) {
+      setError('Please enter a valid DOI before submitting')
+      setDoiWarning('Please enter a valid DOI, for example 10.1038/s41586-020-2649-2.')
+      return
+    }
     if (!formData.lab_name?.trim()) {
       setError('Lab name is required')
       return
@@ -115,6 +148,7 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
       // Log the data being submitted
       const submissionData = {
         ...formData,
+        paper_doi: cleanDoi,
         file_urls: fileUrls,
       }
       console.log('[VerificationForm] Submitting verification data:', {
@@ -234,16 +268,30 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Paper DOI (optional)
+                Paper DOI *
               </label>
               <input
                 type="text"
                 name="paper_doi"
                 value={formData.paper_doi}
                 onChange={handleInputChange}
+                onBlur={(event) => {
+                  const cleanDoi = normalizeDoi(event.target.value)
+                  setFormData(prev => ({ ...prev, paper_doi: cleanDoi }))
+                  setDoiWarning(
+                    cleanDoi && !isValidDoi(cleanDoi)
+                      ? 'Please enter a valid DOI, for example 10.1038/s41586-020-2649-2.'
+                      : null
+                  )
+                }}
+                required
+                aria-invalid={Boolean(doiWarning)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="10.1234/example.doi"
               />
+              {doiWarning && (
+                <p className="mt-2 text-xs text-red-600">{doiWarning}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

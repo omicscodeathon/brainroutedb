@@ -73,3 +73,43 @@ export function isEmpty(value: any): boolean {
   if (typeof value === 'object') return Object.keys(value).length === 0
   return false
 }
+
+/**
+ * Format bin names for display (e.g., tpsa_le_60 -> TPSA ≤ 60)
+ */
+export function formatBinName(bin: string): string {
+  // tpsa_le_60 -> TPSA ≤ 60
+  // tpsa_60_90 -> TPSA 60-90
+  // tpsa_90_140 -> TPSA 90-140
+  // tpsa_gt_140 -> TPSA > 140
+  // logp_lt_1 -> LogP < 1
+  // logp_1_3 -> LogP 1-3
+  // logp_3_5 -> LogP 3-5
+  // logp_gt_5 -> LogP > 5
+
+  if (bin.startsWith('tpsa_')) {
+    const part = bin.replace('tpsa_', '')
+    if (part === 'le_60') return 'TPSA ≤ 60'
+    if (part === '60_90') return 'TPSA 60-90'
+    if (part === '90_140') return 'TPSA 90-140'
+    if (part === 'gt_140') return 'TPSA > 140'
+  }
+
+  if (bin.startsWith('logp_')) {
+    const part = bin.replace('logp_', '')
+    if (part === 'lt_1') return 'LogP < 1'
+    if (part === '1_3') return 'LogP 1-3'
+    if (part === '3_5') return 'LogP 3-5'
+    if (part === 'gt_5') return 'LogP > 5'
+  }
+
+  if (bin.startsWith('mw_')) {
+    const part = bin.replace('mw_', '')
+    if (part === 'lt_300') return 'MW < 300'
+    if (part === '300_450') return 'MW 300-450'
+    if (part === '450_500') return 'MW 450-500'
+    if (part === 'gt_500') return 'MW > 500'
+  }
+
+  return bin
+}

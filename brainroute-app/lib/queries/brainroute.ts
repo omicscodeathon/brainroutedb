@@ -31,18 +31,21 @@ export async function queryMolecules(
     if (filters.search) {
       query = query.ilike('name', `%${filters.search}%`)
     }
+    if (filters.search_smiles) {
+      query = query.ilike('smiles', `%${filters.search_smiles}%`)
+    }
 
     // Apply categorical filters
-    if (filters.polarity_bin && filters.polarity_bin !== 'all') {
-      query = query.eq('polarity_bin', filters.polarity_bin)
+    if (filters.tpsa_bin && filters.tpsa_bin !== 'all') {
+      query = query.eq('tpsa_bin', filters.tpsa_bin)
     }
 
-    if (filters.lipophilicity_bin && filters.lipophilicity_bin !== 'all') {
-      query = query.eq('lipophilicity_bin', filters.lipophilicity_bin)
+    if (filters.logp_bin && filters.logp_bin !== 'all') {
+      query = query.eq('logp_bin', filters.logp_bin)
     }
 
-    if (filters.size_bin && filters.size_bin !== 'all') {
-      query = query.eq('size_bin', filters.size_bin)
+    if (filters.mw_bin && filters.mw_bin !== 'all') {
+      query = query.eq('mw_bin', filters.mw_bin)
     }
 
     // Apply drug rule filters
@@ -98,7 +101,7 @@ export async function queryMolecules(
 
     // Apply sorting
     const orderBy = sortBy || 'id'
-    const order = sortOrder === 'desc'
+    const order = sortOrder !== 'asc'
     query = query.order(orderBy, { ascending: !order })
 
     // Apply pagination
@@ -136,17 +139,20 @@ export async function getFilteredCount(filters: FilterState): Promise<number> {
     if (filters.search) {
       query = query.ilike('name', `%${filters.search}%`)
     }
-
-    if (filters.polarity_bin && filters.polarity_bin !== 'all') {
-      query = query.eq('polarity_bin', filters.polarity_bin)
+    if (filters.search_smiles) {
+      query = query.ilike('smiles', `%${filters.search_smiles}%`)
     }
 
-    if (filters.lipophilicity_bin && filters.lipophilicity_bin !== 'all') {
-      query = query.eq('lipophilicity_bin', filters.lipophilicity_bin)
+    if (filters.tpsa_bin && filters.tpsa_bin !== 'all') {
+      query = query.eq('tpsa_bin', filters.tpsa_bin)
     }
 
-    if (filters.size_bin && filters.size_bin !== 'all') {
-      query = query.eq('size_bin', filters.size_bin)
+    if (filters.logp_bin && filters.logp_bin !== 'all') {
+      query = query.eq('logp_bin', filters.logp_bin)
+    }
+
+    if (filters.mw_bin && filters.mw_bin !== 'all') {
+      query = query.eq('mw_bin', filters.mw_bin)
     }
 
     // Apply drug rule filters
@@ -168,6 +174,14 @@ export async function getFilteredCount(filters: FilterState): Promise<number> {
 
     if (filters.pains_flag !== undefined && filters.pains_flag !== null) {
       query = query.eq('pains_flag', filters.pains_flag)
+    }
+
+    if (filters.aromatic !== undefined && filters.aromatic !== null) {
+      query = query.eq('aromatic', filters.aromatic)
+    }
+
+    if (filters.heterocycle_present !== undefined && filters.heterocycle_present !== null) {
+      query = query.eq('heterocycle_present', filters.heterocycle_present)
     }
 
     // Range filters
@@ -214,17 +228,20 @@ export async function getFilteredDataForExport(filters: FilterState): Promise<Mo
     if (filters.search) {
       query = query.ilike('name', `%${filters.search}%`)
     }
-
-    if (filters.polarity_bin && filters.polarity_bin !== 'all') {
-      query = query.eq('polarity_bin', filters.polarity_bin)
+    if (filters.search_smiles) {
+      query = query.ilike('smiles', `%${filters.search_smiles}%`)
     }
 
-    if (filters.lipophilicity_bin && filters.lipophilicity_bin !== 'all') {
-      query = query.eq('lipophilicity_bin', filters.lipophilicity_bin)
+    if (filters.tpsa_bin && filters.tpsa_bin !== 'all') {
+      query = query.eq('tpsa_bin', filters.tpsa_bin)
     }
 
-    if (filters.size_bin && filters.size_bin !== 'all') {
-      query = query.eq('size_bin', filters.size_bin)
+    if (filters.logp_bin && filters.logp_bin !== 'all') {
+      query = query.eq('logp_bin', filters.logp_bin)
+    }
+
+    if (filters.mw_bin && filters.mw_bin !== 'all') {
+      query = query.eq('mw_bin', filters.mw_bin)
     }
 
     if (filters.lipinski_pass !== undefined && filters.lipinski_pass !== null) {
@@ -245,6 +262,14 @@ export async function getFilteredDataForExport(filters: FilterState): Promise<Mo
 
     if (filters.pains_flag !== undefined && filters.pains_flag !== null) {
       query = query.eq('pains_flag', filters.pains_flag)
+    }
+
+    if (filters.aromatic !== undefined && filters.aromatic !== null) {
+      query = query.eq('aromatic', filters.aromatic)
+    }
+
+    if (filters.heterocycle_present !== undefined && filters.heterocycle_present !== null) {
+      query = query.eq('heterocycle_present', filters.heterocycle_present)
     }
 
     if (filters.mw_min !== undefined) {
@@ -300,20 +325,20 @@ export async function getFilterOptions(): Promise<Record<string, any>> {
   try {
     const { data, error } = await supabase
       .from(TABLE_NAME)
-      .select('polarity_bin, lipophilicity_bin, size_bin')
+      .select('tpsa_bin, logp_bin, mw_bin')
 
     if (error) throw error
 
     // Extract unique values
     const dataArray = (data as unknown as any[]) || []
-    const polarity = Array.from(new Set(dataArray.map(d => d.polarity_bin).filter(Boolean)))
-    const lipophilicity = Array.from(new Set(dataArray.map(d => d.lipophilicity_bin).filter(Boolean)))
-    const size = Array.from(new Set(dataArray.map(d => d.size_bin).filter(Boolean)))
+    const tpsa = Array.from(new Set(dataArray.map(d => d.tpsa_bin).filter(Boolean)))
+    const logp = Array.from(new Set(dataArray.map(d => d.logp_bin).filter(Boolean)))
+    const mw = Array.from(new Set(dataArray.map(d => d.mw_bin).filter(Boolean)))
 
     return {
-      polarity_bin: polarity.sort(),
-      lipophilicity_bin: lipophilicity.sort(),
-      size_bin: size.sort(),
+      tpsa_bin: tpsa.sort(),
+      logp_bin: logp.sort(),
+      mw_bin: mw.sort(),
     }
   } catch (error) {
     console.error('Failed to get filter options:', error)
@@ -376,4 +401,3 @@ export async function getAllMoleculeIds(): Promise<number[]> {
     return []
   }
 }
-

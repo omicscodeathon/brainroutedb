@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import type { Molecule } from '@/lib/types'
+import { buildMoleculeProfile } from '@/lib/utils/molecule-profile'
 
 interface MoleculeDetailProps {
   moleculeId: string
@@ -68,7 +69,12 @@ export function MoleculeDetail({ moleculeId }: MoleculeDetailProps) {
     )
   }
 
-  const profile = molecule.profile_json as Record<string, any> || {}
+  const profile = buildMoleculeProfile(molecule)
+  const tagLabels: Record<string, string> = {
+    br_training: 'Training',
+    br_predicted: 'Predicted',
+    br_verified: 'Verified',
+  }
 
   return (
     <>
@@ -83,6 +89,18 @@ export function MoleculeDetail({ moleculeId }: MoleculeDetailProps) {
             Back
           </button>
           <h1 className="text-4xl font-bold text-gray-900">{molecule.name}</h1>
+          {molecule.tags && molecule.tags.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {molecule.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700"
+                >
+                  {tagLabels[tag] || tag}
+                </span>
+              ))}
+            </div>
+          )}
           <p className="mt-2 text-gray-600">Comprehensive molecule details and analysis</p>
         </div>
       </div>
@@ -155,6 +173,35 @@ export function MoleculeDetail({ moleculeId }: MoleculeDetailProps) {
 
           {/* Right Column - Classification & AI Chat */}
           <div className="space-y-6">
+            {/* BrainRoute Prediction */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">BrainRoute Prediction</h2>
+              <div className="space-y-3">
+                {[
+                  { label: 'BBB Penetration', value: molecule.bbb_tag },
+                  {
+                    label: 'Prediction Confidence',
+                    value: molecule.prediction_confidence !== null && molecule.prediction_confidence !== undefined
+                      ? `${Number(molecule.prediction_confidence).toFixed(1)}%`
+                      : null,
+                  },
+                  {
+                    label: 'CNS MPO Score',
+                    value: molecule.cns_mpo !== null && molecule.cns_mpo !== undefined
+                      ? Number(molecule.cns_mpo).toFixed(1)
+                      : null,
+                  },
+                ].map(({ label, value }) => (
+                  <div key={label} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                    <span className="text-sm font-medium text-gray-600">{label}</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {value || '—'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Structural Classification */}
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Structural Properties</h2>
@@ -183,9 +230,9 @@ export function MoleculeDetail({ moleculeId }: MoleculeDetailProps) {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Classification Bins</h2>
               <div className="space-y-3">
                 {[
-                  { label: 'Polarity', value: molecule.polarity_bin },
-                  { label: 'Lipophilicity', value: molecule.lipophilicity_bin },
-                  { label: 'Size', value: molecule.size_bin },
+                  { label: 'TPSA', value: molecule.tpsa_bin },
+                  { label: 'LogP', value: molecule.logp_bin },
+                  { label: 'Molecular Weight', value: molecule.mw_bin },
                 ].map(({ label, value }) => (
                   <div key={label}>
                     <p className="text-xs font-medium text-gray-600 uppercase mb-1">{label}</p>
