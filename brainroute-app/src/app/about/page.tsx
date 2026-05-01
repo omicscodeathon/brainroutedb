@@ -32,6 +32,12 @@ export default function About() {
           <p className="text-gray-700 leading-relaxed">
             The platform contains a curated dataset of 3,800+ molecules with computed physicochemical and structural properties, filtered through multiple drug candidacy rules to provide reliable predictions for BBB penetration.
           </p>
+          <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <h3 className="font-semibold text-gray-900 mb-2">Interpreting Results</h3>
+            <p className="text-sm text-gray-700">
+              BrainRoute predictions and computed properties are intended as research screening aids. They should be reviewed alongside experimental evidence and domain expertise, not treated as definitive ground truth.
+            </p>
+          </div>
         </section>
 
         {/* Data Tags */}

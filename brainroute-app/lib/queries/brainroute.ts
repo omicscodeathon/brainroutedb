@@ -389,13 +389,30 @@ export async function getNumericRanges(): Promise<Record<string, { min: number; 
  */
 export async function getAllMoleculeIds(): Promise<number[]> {
   try {
-    const { data, error } = await supabase
-      .from(TABLE_NAME)
-      .select('id')
+    const pageSize = 1000
+    let start = 0
+    let ids: number[] = []
 
-    if (error) throw error
-    
-    return (data || []).map((row: { id: number }) => row.id)
+    while (true) {
+      const { data, error } = await supabase
+        .from(TABLE_NAME)
+        .select('id')
+        .order('id', { ascending: true })
+        .range(start, start + pageSize - 1)
+
+      if (error) throw error
+
+      const pageIds = (data || []).map((row: { id: number }) => row.id)
+      ids = ids.concat(pageIds)
+
+      if (pageIds.length < pageSize) {
+        break
+      }
+
+      start += pageSize
+    }
+
+    return ids
   } catch (error) {
     console.error('Failed to get all molecule IDs:', error)
     return []
