@@ -51,7 +51,7 @@ export function VerificationList({ refreshTrigger }: VerificationListProps) {
       <div className="border-b border-gray-200 p-6">
         <input
           type="text"
-          placeholder="Search by molecule name or lab..."
+          placeholder="Search by SMILES, compound name, molecule info, or lab..."
           value={searchTerm}
           onChange={e => {
             setSearchTerm(e.target.value)
@@ -118,7 +118,7 @@ export function VerificationList({ refreshTrigger }: VerificationListProps) {
                 </div>
                 <div>
                   <p className="text-gray-600 font-medium">Lab</p>
-                  <p className="text-gray-900">{submission.lab_name}</p>
+                  <p className="text-gray-900">{submission.lab_name || 'Not provided'}</p>
                 </div>
                 <div>
                   <p className="text-gray-600 font-medium">Result</p>
@@ -133,6 +133,15 @@ export function VerificationList({ refreshTrigger }: VerificationListProps) {
                   </p>
                 </div>
               </div>
+
+              {submission.molecule_information && (
+                <div className="mb-4 bg-blue-50 p-3 rounded border border-blue-100">
+                  <p className="text-sm font-medium text-gray-700 mb-1">Molecule Information</p>
+                  <p className="text-sm text-gray-600 line-clamp-2">
+                    {submission.molecule_information}
+                  </p>
+                </div>
+              )}
 
               {/* Description */}
               <div className="mb-4 bg-gray-50 p-3 rounded border border-gray-200">

@@ -37,6 +37,8 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
 
   const [formData, setFormData] = useState<VerificationSubmission>({
+    molecule_name: '',
+    molecule_information: '',
     paper_doi: '',
     lab_name: '',
     institution_name: '',
@@ -106,8 +108,8 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
       setDoiWarning('Please enter a valid DOI, for example 10.1038/s41586-020-2649-2.')
       return
     }
-    if (!formData.lab_name?.trim()) {
-      setError('Lab name is required')
+    if (!formData.molecule_name?.trim()) {
+      setError('SMILES or compound name is required')
       return
     }
     if (!formData.institution_name?.trim()) {
@@ -168,6 +170,8 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
       // Success
       setSuccess(true)
       setFormData({
+        molecule_name: '',
+        molecule_information: '',
         paper_doi: '',
         lab_name: '',
         institution_name: '',
@@ -233,14 +237,13 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Lab Name *
+                Lab Name
               </label>
               <input
                 type="text"
                 name="lab_name"
                 value={formData.lab_name}
                 onChange={handleInputChange}
-                required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Molecular Transport Lab"
               />
@@ -266,6 +269,33 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
         <div className="border-t border-gray-200 pt-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Experiment Details</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                SMILES or Compound Name *
+              </label>
+              <input
+                type="text"
+                name="molecule_name"
+                value={formData.molecule_name}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="C1=CC=CC=C1 or benzene"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Molecule Information
+              </label>
+              <textarea
+                name="molecule_information"
+                value={formData.molecule_information}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Optional notes such as synonyms, source, assay context, structure details, or identifiers..."
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Paper DOI *

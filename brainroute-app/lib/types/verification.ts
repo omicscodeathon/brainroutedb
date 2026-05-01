@@ -8,10 +8,11 @@ export type VerificationStatus = 'br_training' | 'br_user_verified' | 'predicted
 export interface VerificationSubmission {
   id?: string
   molecule_id?: number // If verifying existing molecule
-  molecule_name?: string // If submitting new molecule
+  molecule_name: string // SMILES or compound name
   smiles?: string // If submitting new molecule
+  molecule_information?: string
   paper_doi: string // Required - link to paper
-  lab_name: string
+  lab_name?: string
   institution_name: string
   experiment_description: string
   experiment_data: string // JSON or description of results

@@ -68,7 +68,9 @@ export async function getVerifications(
 
     // Apply filters
     if (filters?.search) {
-      query = query.or(`molecule_name.ilike.%${filters.search}%,lab_name.ilike.%${filters.search}%`)
+      query = query.or(
+        `molecule_name.ilike.%${filters.search}%,smiles.ilike.%${filters.search}%,molecule_information.ilike.%${filters.search}%,lab_name.ilike.%${filters.search}%`
+      )
     }
 
     if (filters?.technique) {
