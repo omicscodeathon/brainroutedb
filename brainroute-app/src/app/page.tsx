@@ -1,214 +1,131 @@
-/**
- * Home Landing Page
- * Entry point for the BrainRoute platform
- */
-
 import Link from 'next/link'
+import { ArrowRight, Database, FileCheck2, ShieldCheck, Sparkles } from 'lucide-react'
 import { Header } from '@/src/components/Header'
-import { ArrowRight, Database, Zap, Share2 } from 'lucide-react'
+import { PortalActionMenu } from '@/src/components/portal/PortalActionMenu'
+import { ExploreBrainRouteChart } from '@/src/components/portal/ExploreBrainRouteChart'
+import { RecentlyAddedMoleculeCard } from '@/src/components/portal/RecentlyAddedMoleculeCard'
+import { PortalSearchBox } from '@/src/components/portal/PortalSearchBox'
+
+const resourceCards = [
+  {
+    title: 'Know Your Data',
+    href: '/know-your-data',
+    icon: Database,
+    description:
+      'Use interactive filters, table previews, and summary charts to inspect the current BrainRoute dataset.',
+  },
+  {
+    title: 'Verify Data',
+    href: '/verify',
+    icon: FileCheck2,
+    description:
+      'Submit experimental BBB permeability evidence and help reconcile predictions with reviewed records.',
+  },
+  {
+    title: 'Getting Started',
+    href: '/getting-started',
+    icon: ShieldCheck,
+    description:
+      'Review the meaning of BrainRoute labels, calculated metrics, tags, and current development status.',
+  },
+]
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-blue-50">
       <Header />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 tracking-tight">
-              BrainRoute
-            </h1>
-            <p className="mt-6 text-xl text-gray-600 max-w-2xl mx-auto">
-              A blood-brain barrier permeability platform where users can explore, query, and
-              access BBB permeability data and insights.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900">Why BrainRoute?</h2>
-            <p className="mt-4 text-xl text-gray-600">
-              A comprehensive platform for BBB permeability research
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Database className="h-8 w-8 text-blue-600" />,
-                title: 'Comprehensive Dataset',
-                description:
-                  'Access thousands of molecules with detailed BBB permeability classifications and drug-like property assessments.',
-              },
-              {
-                icon: <Zap className="h-8 w-8 text-blue-600" />,
-                title: 'Fast Filtering',
-                description:
-                  'Query molecules by drug rules (Lipinski, Veber, Egan, Ghose), structural properties, and physicochemical characteristics.',
-              },
-              {
-                icon: <Share2 className="h-8 w-8 text-blue-600" />,
-                title: 'Easy Export',
-                description:
-                  'Download filtered datasets as CSV and integrate with your research workflows seamlessly.',
-              },
-            ].map((feature, idx) => (
-              <div
-                key={idx}
-                className="bg-gray-50 rounded-lg p-8 border border-gray-200 hover:shadow-lg transition"
-              >
-                <div className="mb-4">{feature.icon}</div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Navigation Cards Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900">Get Started</h2>
-            <p className="mt-4 text-xl text-gray-600">
-              Choose how you'd like to interact with our platform
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Know Your Data Card */}
-            <Link
-              href="/know-your-data"
-              className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl hover:scale-105 transition border border-gray-200"
-            >
-              <div className="mb-4">
-                <div className="inline-block p-3 bg-blue-100 rounded-lg">
-                  <Database className="h-6 w-6 text-blue-600" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">Know Your Data</h3>
-              <p className="text-gray-600 mb-6">
-                Explore the BBB dataset with interactive filters, visualizations, and insights.
-                Filter by drug rules, molecular properties, and structural features.
-              </p>
-              <div className="flex items-center text-blue-600 font-semibold group">
-                Explore Data
-                <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition" />
-              </div>
-            </Link>
-
-            {/* Verify Data Card */}
-            <Link
-              href="/verify-data"
-              className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl hover:scale-105 transition border border-gray-200"
-            >
-              <div className="mb-4">
-                <div className="inline-block p-3 bg-green-100 rounded-lg">
-                  <Database className="h-6 w-6 text-green-600" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">Verify Data</h3>
-              <p className="text-gray-600 mb-6">
-                Submit your experimental BBB permeability results and verify molecules in our
-                database. Help us improve our models with verified data.
-              </p>
-              <div className="flex items-center text-green-600 font-semibold group">
-                Submit Results
-                <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition" />
-              </div>
-            </Link>
-
-            {/* Prediction Tool Card */}
-            <a
-              href={process.env.NEXT_PUBLIC_STREAMLIT_APP_URL || '#'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl hover:scale-105 transition border border-gray-200"
-            >
-              <div className="mb-4">
-                <div className="inline-block p-3 bg-indigo-100 rounded-lg">
-                  <Zap className="h-6 w-6 text-indigo-600" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">
-                Prediction Tool
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Use our machine learning model to predict BBB permeability for novel molecules.
-                Access the integrated Streamlit application.
-              </p>
-              <div className="flex items-center text-indigo-600 font-semibold group">
-                Launch Tool
-                <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition" />
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h3 className="text-white font-semibold mb-4">BrainRoute</h3>
-              <p className="text-sm">
-                A comprehensive platform for blood-brain barrier permeability research.
-              </p>
+      <main>
+        <section className="border-b border-blue-100 bg-blue-50">
+          <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:px-8">
+            <div className="space-y-6">
+              <PortalActionMenu />
+              <RecentlyAddedMoleculeCard />
             </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Resources</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="/about" className="hover:text-white transition">
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="/know-your-data" className="hover:text-white transition">
-                    Data Explorer
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={process.env.NEXT_PUBLIC_STREAMLIT_APP_URL || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white transition"
-                  >
-                    Prediction Tool
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-4">Information</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="/about" className="hover:text-white transition">
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a href="/about" className="hover:text-white transition">
-                    Contact
-                  </a>
-                </li>
-              </ul>
+
+            <div className="space-y-6">
+              <section className="border border-slate-200 bg-white">
+                <div className="border-b border-slate-200 bg-slate-50 px-6 py-4">
+                  <p className="text-sm font-bold uppercase text-blue-700">
+                    BrainRoute Database
+                  </p>
+                </div>
+                <div className="grid gap-8 p-6 sm:p-8 xl:grid-cols-[minmax(0,1fr)_300px]">
+                  <div>
+                    <h1 className="text-4xl font-bold text-slate-950 sm:text-5xl">
+                      Explore BrainRoute
+                    </h1>
+                    <p className="mt-4 max-w-4xl text-base leading-7 text-slate-700">
+                      Search blood-brain barrier permeability data across molecule properties,
+                      predictions, verification tags, and downloadable research-ready records.
+                    </p>
+                    <div className="mt-6">
+                      <PortalSearchBox />
+                    </div>
+                  </div>
+                  <aside className="border border-blue-200 bg-blue-50 p-5">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-blue-700" />
+                      <h2 className="text-sm font-bold uppercase text-blue-800">
+                        Prediction Tool
+                      </h2>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-slate-700">
+                      Run a BBB permeability prediction for a new molecule, then return here to
+                      compare it with curated BrainRoute records.
+                    </p>
+                    <a
+                      href={
+                        process.env.NEXT_PUBLIC_STREAMLIT_APP_URL ||
+                        'https://brainroute.streamlit.app/'
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-5 inline-flex w-full items-center justify-center gap-2 border border-blue-700 bg-blue-700 px-5 py-4 text-base font-bold text-white shadow-sm transition hover:bg-blue-800"
+                    >
+                      Launch prediction tool
+                      <ArrowRight className="h-5 w-5" />
+                    </a>
+                  </aside>
+                </div>
+              </section>
+
+              <ExploreBrainRouteChart />
             </div>
           </div>
-          <div className="border-t border-gray-700 pt-8 text-center text-sm">
-            <p>© 2026 BrainRoute. All rights reserved.</p>
-            <p className="mt-2 text-gray-400">Version 1</p>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="grid gap-4 md:grid-cols-3">
+            {resourceCards.map((card) => {
+              const Icon = card.icon
+              return (
+                <Link
+                  key={card.href}
+                  href={card.href}
+                  className="group border border-slate-200 bg-white p-6 transition hover:border-blue-200 hover:bg-blue-50"
+                >
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded border border-blue-200 bg-blue-50 text-blue-700">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-950">{card.title}</h2>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">
+                        {card.description}
+                      </p>
+                      <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-blue-700">
+                        Open resource
+                        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
-        </div>
-      </footer>
+        </section>
+      </main>
     </div>
   )
 }

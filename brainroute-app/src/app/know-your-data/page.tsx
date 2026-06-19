@@ -6,6 +6,8 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { Header } from '@/src/components/Header'
 import { FilterPanel } from '@/src/components/filters/FilterPanel'
 import { DataPreview } from '@/src/components/table/DataPreview'
@@ -13,6 +15,7 @@ import { DataInsights } from '@/src/components/charts/DataInsights'
 import { DownloadData } from '@/src/components/download/DownloadData'
 import { getFilteredCount } from '@/lib/queries/brainroute'
 import type { FilterState } from '@/lib/types'
+import { createFilteredHref } from '@/lib/utils/filter-url'
 
 export default function KnowYourDataPage() {
   const [filters, setFilters] = useState<FilterState>({})
@@ -46,7 +49,7 @@ export default function KnowYourDataPage() {
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900">Know Your Data</h1>
           <p className="mt-2 text-gray-600">
-            Explore, filter, and analyze the BBB permeability dataset
+            Explore and filter the BBB permeability dataset
           </p>
         </div>
       </div>
@@ -68,9 +71,20 @@ export default function KnowYourDataPage() {
             {/* Results Summary */}
             <div className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-600">
               <p className="text-sm text-gray-600">Total Results</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {isLoadingCount ? '...' : totalRecords.toLocaleString()}
-              </p>
+              <div className="mt-1 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <p className="text-3xl font-bold text-gray-900">
+                  {isLoadingCount ? '...' : totalRecords.toLocaleString()}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={createFilteredHref('/visualize', filters)}
+                    className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  >
+                    Visualize selected data
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {/* Data Preview Table */}

@@ -6,9 +6,8 @@
 'use client'
 
 import React from 'react'
-import { X, Expand } from 'lucide-react'
+import { X } from 'lucide-react'
 import type { Molecule } from '@/lib/types'
-import Link from 'next/link'
 import { buildMoleculeProfile } from '@/lib/utils/molecule-profile'
 
 interface MoleculeDetailCardProps {
@@ -47,13 +46,6 @@ export function MoleculeDetailCard({ molecule, onClose }: MoleculeDetailCardProp
             )}
           </div>
           <div className="flex gap-2">
-            <Link
-              href={`/molecule/${molecule.id}`}
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            >
-              <Expand className="h-4 w-4" />
-              Expand
-            </Link>
             <button
               onClick={onClose}
               className="inline-flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-200 transition"

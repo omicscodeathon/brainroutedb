@@ -12,6 +12,7 @@ import {
   SelectFilter,
   CheckboxFilter,
   RangeFilter,
+  MultiSelectFilter,
 } from './FilterComponents'
 import type { FilterState } from '@/lib/types'
 import { getFilterOptions, getNumericRanges } from '@/lib/queries/brainroute'
@@ -80,6 +81,15 @@ export function FilterPanel({
     onFiltersChange({ ...filters, [key]: value })
   }
 
+  const updateBooleanSelectFilter = (key: string, value: string) => {
+    if (!value || value === 'all') {
+      updateFilter(key, undefined)
+      return
+    }
+
+    updateFilter(key, value === 'true')
+  }
+
   return (
     <div className="bg-white rounded-lg shadow p-6 space-y-6">
       <div className="flex items-center justify-between mb-4">
@@ -113,6 +123,18 @@ export function FilterPanel({
             value={filters.search_smiles || ''}
             onChange={(value) => updateFilter('search_smiles', value || undefined)}
             placeholder="SMILES string..."
+          />
+
+          <SelectFilter
+            label="BBB tag"
+            value={filters.bbb_tag || ''}
+            onChange={(value) => updateFilter('bbb_tag', value || undefined)}
+            options={[
+              { label: 'All', value: 'all' },
+              { label: 'BBB positive', value: 'positive' },
+              { label: 'BBB negative', value: 'negative' },
+              { label: 'Unknown or unlabeled', value: 'unknown' },
+            ]}
           />
 
           {/* Categorical Filters */}
@@ -182,14 +204,45 @@ export function FilterPanel({
                 }
               />
 
-              <CheckboxFilter
-                label="PAINS Flag (exclude)"
-                checked={filters.pains_flag === false}
-                onChange={(checked) =>
-                  updateFilter('pains_flag', checked ? false : undefined)
+              <SelectFilter
+                label="PAINS flag"
+                value={
+                  filters.pains_flag === true
+                    ? 'true'
+                    : filters.pains_flag === false
+                      ? 'false'
+                      : ''
                 }
+                onChange={(value) => updateBooleanSelectFilter('pains_flag', value)}
+                options={[
+                  { label: 'All', value: 'all' },
+                  { label: 'PAINS clear', value: 'false' },
+                  { label: 'PAINS flagged', value: 'true' },
+                ]}
               />
             </div>
+          </div>
+
+          {/* Molecule Tags */}
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-semibold text-gray-900 mb-4">Molecule Tags</h3>
+
+            <MultiSelectFilter
+              label="Source / review tags"
+              values={filters.tags || (filters.tag ? [filters.tag] : [])}
+              onChange={(values) => {
+                onFiltersChange({
+                  ...filters,
+                  tag: undefined,
+                  tags: values.length > 0 ? values : undefined,
+                })
+              }}
+              options={[
+                { label: 'Training', value: 'br_training' },
+                { label: 'Predicted', value: 'br_predicted' },
+                { label: 'Verified', value: 'br_verified' },
+              ]}
+            />
           </div>
 
           {/* Structural Properties */}
@@ -244,6 +297,19 @@ export function FilterPanel({
 
             <div className="mt-4">
               <RangeFilter
+                label="LogD"
+                minValue={filters.logd_min || ''}
+                maxValue={filters.logd_max || ''}
+                onMinChange={(value) => updateFilter('logd_min', value || undefined)}
+                onMaxChange={(value) => updateFilter('logd_max', value || undefined)}
+                min={Math.floor(numericRanges.logd?.min || -5)}
+                max={Math.ceil(numericRanges.logd?.max || 10)}
+                step={0.1}
+              />
+            </div>
+
+            <div className="mt-4">
+              <RangeFilter
                 label="TPSA"
                 minValue={filters.tpsa_min || ''}
                 maxValue={filters.tpsa_max || ''}
@@ -251,6 +317,36 @@ export function FilterPanel({
                 onMaxChange={(value) => updateFilter('tpsa_max', value || undefined)}
                 min={numericRanges.tpsa?.min || 0}
                 max={numericRanges.tpsa?.max || 300}
+              />
+            </div>
+
+            <div className="mt-4">
+              <RangeFilter
+                label="CNS MPO"
+                minValue={filters.cns_mpo_min || ''}
+                maxValue={filters.cns_mpo_max || ''}
+                onMinChange={(value) => updateFilter('cns_mpo_min', value || undefined)}
+                onMaxChange={(value) => updateFilter('cns_mpo_max', value || undefined)}
+                min={Math.floor(numericRanges.cns_mpo?.min || 0)}
+                max={Math.ceil(numericRanges.cns_mpo?.max || 6)}
+                step={0.1}
+              />
+            </div>
+
+            <div className="mt-4">
+              <RangeFilter
+                label="Prediction Confidence"
+                minValue={filters.prediction_confidence_min || ''}
+                maxValue={filters.prediction_confidence_max || ''}
+                onMinChange={(value) =>
+                  updateFilter('prediction_confidence_min', value || undefined)
+                }
+                onMaxChange={(value) =>
+                  updateFilter('prediction_confidence_max', value || undefined)
+                }
+                min={Math.floor(numericRanges.prediction_confidence?.min || 0)}
+                max={Math.ceil(numericRanges.prediction_confidence?.max || 100)}
+                step={1}
               />
             </div>
           </div>

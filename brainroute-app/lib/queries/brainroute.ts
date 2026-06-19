@@ -10,8 +10,72 @@
 
 import { supabase } from '../supabase/client'
 import type { Molecule, FilterState, DataPreviewResponse, InsightsData } from '../types'
+import type { BrainRoutePortalStats } from '@/src/data/portalStats'
 
 const TABLE_NAME = 'molecules'
+
+function normalizeSearchTerm(value: any): string {
+  return String(value || '')
+    .replace(/[,%]/g, ' ')
+    .trim()
+}
+
+function applyPortalFilters(query: any, filters: FilterState) {
+  if (filters.bbb_tag) {
+    query = query.ilike('bbb_tag', `%${normalizeSearchTerm(filters.bbb_tag)}%`)
+  }
+
+  if (filters.tag) {
+    query = query.contains('tags', [filters.tag])
+  }
+
+  if (Array.isArray(filters.tags)) {
+    filters.tags.forEach((tag: string) => {
+      query = query.contains('tags', [tag])
+    })
+  }
+
+  if (filters.drug_like) {
+    query = query
+      .eq('lipinski_pass', true)
+      .eq('veber_pass', true)
+      .eq('egan_pass', true)
+      .eq('ghose_pass', true)
+      .eq('pains_flag', false)
+  }
+
+  return query
+}
+
+function applyNumericRangeFilters(query: any, filters: FilterState) {
+  const ranges = [
+    ['mw', 'mw_min', 'mw_max'],
+    ['logp', 'logp_min', 'logp_max'],
+    ['logd', 'logd_min', 'logd_max'],
+    ['tpsa', 'tpsa_min', 'tpsa_max'],
+    ['cns_mpo', 'cns_mpo_min', 'cns_mpo_max'],
+    ['prediction_confidence', 'prediction_confidence_min', 'prediction_confidence_max'],
+    ['hbd', 'hbd_min', 'hbd_max'],
+    ['hba', 'hba_min', 'hba_max'],
+    ['rotatable_bonds', 'rotatable_bonds_min', 'rotatable_bonds_max'],
+    ['ring_count', 'ring_count_min', 'ring_count_max'],
+  ]
+
+  ranges.forEach(([column, minKey, maxKey]) => {
+    const minValue = filters[minKey]
+    const maxValue = filters[maxKey]
+
+    if (minValue !== undefined && minValue !== '') {
+      query = query.gte(column, minValue)
+    }
+
+    if (maxValue !== undefined && maxValue !== '') {
+      query = query.lte(column, maxValue)
+    }
+  })
+
+  return query
+}
 
 /**
  * Build and execute a filtered query to Supabase
@@ -29,7 +93,10 @@ export async function queryMolecules(
 
     // Apply text search
     if (filters.search) {
-      query = query.ilike('name', `%${filters.search}%`)
+      const searchTerm = normalizeSearchTerm(filters.search)
+      query = query.or(
+        `name.ilike.%${searchTerm}%,smiles.ilike.%${searchTerm}%,bbb_tag.ilike.%${searchTerm}%`
+      )
     }
     if (filters.search_smiles) {
       query = query.ilike('smiles', `%${filters.search_smiles}%`)
@@ -77,27 +144,9 @@ export async function queryMolecules(
       query = query.eq('heterocycle_present', filters.heterocycle_present)
     }
 
-    // Apply numeric range filters
-    if (filters.mw_min !== undefined) {
-      query = query.gte('mw', filters.mw_min)
-    }
-    if (filters.mw_max !== undefined) {
-      query = query.lte('mw', filters.mw_max)
-    }
+    query = applyPortalFilters(query, filters)
 
-    if (filters.logp_min !== undefined) {
-      query = query.gte('logp', filters.logp_min)
-    }
-    if (filters.logp_max !== undefined) {
-      query = query.lte('logp', filters.logp_max)
-    }
-
-    if (filters.tpsa_min !== undefined) {
-      query = query.gte('tpsa', filters.tpsa_min)
-    }
-    if (filters.tpsa_max !== undefined) {
-      query = query.lte('tpsa', filters.tpsa_max)
-    }
+    query = applyNumericRangeFilters(query, filters)
 
     // Apply sorting
     const orderBy = sortBy || 'id'
@@ -137,7 +186,10 @@ export async function getFilteredCount(filters: FilterState): Promise<number> {
     let query = supabase.from(TABLE_NAME).select('id', { count: 'exact', head: true })
 
     if (filters.search) {
-      query = query.ilike('name', `%${filters.search}%`)
+      const searchTerm = normalizeSearchTerm(filters.search)
+      query = query.or(
+        `name.ilike.%${searchTerm}%,smiles.ilike.%${searchTerm}%,bbb_tag.ilike.%${searchTerm}%`
+      )
     }
     if (filters.search_smiles) {
       query = query.ilike('smiles', `%${filters.search_smiles}%`)
@@ -184,27 +236,9 @@ export async function getFilteredCount(filters: FilterState): Promise<number> {
       query = query.eq('heterocycle_present', filters.heterocycle_present)
     }
 
-    // Range filters
-    if (filters.mw_min !== undefined) {
-      query = query.gte('mw', filters.mw_min)
-    }
-    if (filters.mw_max !== undefined) {
-      query = query.lte('mw', filters.mw_max)
-    }
+    query = applyPortalFilters(query, filters)
 
-    if (filters.logp_min !== undefined) {
-      query = query.gte('logp', filters.logp_min)
-    }
-    if (filters.logp_max !== undefined) {
-      query = query.lte('logp', filters.logp_max)
-    }
-
-    if (filters.tpsa_min !== undefined) {
-      query = query.gte('tpsa', filters.tpsa_min)
-    }
-    if (filters.tpsa_max !== undefined) {
-      query = query.lte('tpsa', filters.tpsa_max)
-    }
+    query = applyNumericRangeFilters(query, filters)
 
     const { count, error } = await query
 
@@ -226,7 +260,10 @@ export async function getFilteredDataForExport(filters: FilterState): Promise<Mo
     let query = supabase.from(TABLE_NAME).select('*')
 
     if (filters.search) {
-      query = query.ilike('name', `%${filters.search}%`)
+      const searchTerm = normalizeSearchTerm(filters.search)
+      query = query.or(
+        `name.ilike.%${searchTerm}%,smiles.ilike.%${searchTerm}%,bbb_tag.ilike.%${searchTerm}%`
+      )
     }
     if (filters.search_smiles) {
       query = query.ilike('smiles', `%${filters.search_smiles}%`)
@@ -272,12 +309,9 @@ export async function getFilteredDataForExport(filters: FilterState): Promise<Mo
       query = query.eq('heterocycle_present', filters.heterocycle_present)
     }
 
-    if (filters.mw_min !== undefined) {
-      query = query.gte('mw', filters.mw_min)
-    }
-    if (filters.mw_max !== undefined) {
-      query = query.lte('mw', filters.mw_max)
-    }
+    query = applyPortalFilters(query, filters)
+
+    query = applyNumericRangeFilters(query, filters)
 
     const { data, error } = await query
 
@@ -318,6 +352,45 @@ export async function getCategoricalStats(filters: FilterState): Promise<Record<
 }
 
 /**
+ * Get filtered molecule rows for visualization and analysis pages.
+ * Supabase commonly caps each request at 1,000 rows, so fetch in pages.
+ */
+export async function getFilteredMoleculesForVisualization(
+  filters: FilterState,
+  limit: number = 50000
+): Promise<DataPreviewResponse> {
+  const pageSize = 1000
+  let page = 1
+  let total = 0
+  let rows: Molecule[] = []
+
+  while (rows.length < limit) {
+    const response = await queryMolecules(filters, 'id', 'desc', page, pageSize)
+
+    if (page === 1) {
+      total = response.total
+    }
+
+    rows = rows.concat(response.data)
+
+    if (response.data.length === 0 || rows.length >= total) {
+      break
+    }
+
+    page += 1
+  }
+
+  const data = rows.slice(0, limit)
+
+  return {
+    data,
+    total,
+    page: 1,
+    pageSize: data.length,
+  }
+}
+
+/**
  * Get available filter options
  * Useful for populating dropdowns
  */
@@ -354,7 +427,7 @@ export async function getNumericRanges(): Promise<Record<string, { min: number; 
     // This is a simplified approach; for better performance, use Supabase functions or aggregation
     const { data, error } = await supabase
       .from(TABLE_NAME)
-      .select('mw, logp, tpsa, hbd, hba, rotatable_bonds')
+      .select('mw, logp, logd, tpsa, cns_mpo, prediction_confidence, hbd, hba, rotatable_bonds, ring_count')
 
     if (error) throw error
 
@@ -363,7 +436,18 @@ export async function getNumericRanges(): Promise<Record<string, { min: number; 
     const ranges: Record<string, { min: number; max: number }> = {}
 
     // Calculate ranges for numeric fields
-    ;['mw', 'logp', 'tpsa', 'hbd', 'hba', 'rotatable_bonds'].forEach(field => {
+    ;[
+      'mw',
+      'logp',
+      'logd',
+      'tpsa',
+      'cns_mpo',
+      'prediction_confidence',
+      'hbd',
+      'hba',
+      'rotatable_bonds',
+      'ring_count',
+    ].forEach(field => {
       const values = molecules
         .map((m: any) => m[field])
         .filter((v: any) => v !== null && v !== undefined) as number[]
@@ -416,5 +500,95 @@ export async function getAllMoleculeIds(): Promise<number[]> {
   } catch (error) {
     console.error('Failed to get all molecule IDs:', error)
     return []
+  }
+}
+
+async function getCountWithModifier(
+  modifier?: (query: any) => any
+): Promise<number> {
+  let query: any = supabase.from(TABLE_NAME).select('id', { count: 'exact', head: true })
+
+  if (modifier) {
+    query = modifier(query)
+  }
+
+  const { count, error } = await query
+
+  if (error) {
+    throw error
+  }
+
+  return count || 0
+}
+
+async function getTagCount(tag: string): Promise<number> {
+  return getCountWithModifier((query) => query.contains('tags', [tag]))
+}
+
+/**
+ * Get the count summary used by the portal home page.
+ * Falls back in the component layer if a deployment lacks one of these columns.
+ */
+export async function getBrainRoutePortalStats(): Promise<BrainRoutePortalStats> {
+  const [
+    totalMolecules,
+    bbbPositive,
+    bbbNegative,
+    trainingMolecules,
+    predictedMolecules,
+    verifiedMolecules,
+  ] = await Promise.all([
+    getCountWithModifier(),
+    getCountWithModifier((query) => query.or('bbb_tag.ilike.%positive%,bbb_tag.eq.BBB+')),
+    getCountWithModifier((query) => query.or('bbb_tag.ilike.%negative%,bbb_tag.eq.BBB-')),
+    getTagCount('br_training'),
+    getTagCount('br_predicted'),
+    getTagCount('br_verified'),
+  ])
+
+  return {
+    totalMolecules,
+    bbbPositive,
+    bbbNegative,
+    trainingMolecules,
+    predictedMolecules,
+    verifiedMolecules,
+  }
+}
+
+/**
+ * Get the newest molecule for the home page. If created_at cannot be queried,
+ * use the highest ID as a stable representative record.
+ */
+export async function getRecentlyAddedMolecule(): Promise<Molecule | null> {
+  try {
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (error) throw error
+
+    return (data as Molecule) || null
+  } catch (error) {
+    console.error('Failed to fetch newest molecule by created_at:', error)
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select('*')
+      .order('id', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (error) throw error
+
+    return (data as Molecule) || null
+  } catch (error) {
+    console.error('Failed to fetch representative molecule:', error)
+    return null
   }
 }
