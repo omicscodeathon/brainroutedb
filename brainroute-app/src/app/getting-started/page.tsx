@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, CheckCircle2, Clock, Database, FileText } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Database, FileText } from 'lucide-react'
 import { Header } from '@/src/components/Header'
 
 const whatsNew = [
@@ -9,17 +9,6 @@ const whatsNew = [
   'Molecule detail pages with computed properties and BrainRoute tags',
   'External Streamlit prediction tool for novel molecule screening',
   'Static GitHub Pages deployment for broad public access',
-]
-
-const workInProgress = [
-  'More detailed visualization page',
-  'Batch prediction',
-  'Molecule similarity search',
-  'Downloadable curated datasets',
-  'External validation data expansion',
-  'Improved molecule cards',
-  'Model confidence and uncertainty display',
-  'Better integration between predicted molecules and verified molecules',
 ]
 
 const metricSections = [
@@ -198,20 +187,6 @@ export default function GettingStartedPage() {
               <div className="mt-5 grid gap-3 md:grid-cols-2">
                 {whatsNew.map((item) => (
                   <div key={item} className="border border-slate-200 bg-slate-50 p-4">
-                    <p className="text-sm font-semibold text-slate-800">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="border border-slate-200 bg-white p-6">
-              <div className="flex items-center gap-3">
-                <Clock className="h-6 w-6 text-amber-700" />
-                <h2 className="text-2xl font-bold text-slate-950">Work in Progress</h2>
-              </div>
-              <div className="mt-5 grid gap-3 md:grid-cols-3">
-                {workInProgress.map((item) => (
-                  <div key={item} className="border border-amber-200 bg-amber-50 p-4">
                     <p className="text-sm font-semibold text-slate-800">{item}</p>
                   </div>
                 ))}
