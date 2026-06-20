@@ -5,11 +5,13 @@
 
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Upload, X, AlertCircle } from 'lucide-react'
 import type { VerificationSubmission } from '@/lib/types/verification'
 import { submitVerification } from '@/lib/queries/verification'
 import { uploadVerificationFiles } from '@/lib/supabase/storage'
+import { useAuth } from '@/src/components/auth/AuthProvider'
+import { LoginPanel } from '@/src/components/auth/LoginPanel'
 
 interface VerificationFormProps {
   onSuccess?: () => void
@@ -30,6 +32,7 @@ function isValidDoi(value: string): boolean {
 }
 
 export function VerificationForm({ onSuccess }: VerificationFormProps) {
+  const { user, isAuthReady, isLoggedIn } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [doiWarning, setDoiWarning] = useState<string | null>(null)
@@ -46,8 +49,22 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
     experiment_data: '',
     technique_used: '',
     permeability_result: 'moderate',
+    is_public: false,
     submitted_by: '',
   })
+
+  useEffect(() => {
+    if (!user?.email) return
+
+    setFormData((prev) => {
+      if (prev.submitted_by.trim()) return prev
+
+      return {
+        ...prev,
+        submitted_by: user.email || '',
+      }
+    })
+  }, [user?.email])
 
   // Handle form input changes
   const handleInputChange = (
@@ -64,7 +81,7 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
     }
     setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: name === 'is_public' ? value === 'true' : value,
     }))
   }
 
@@ -96,6 +113,11 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
     e.preventDefault()
     setError(null)
     setSuccess(false)
+
+    if (!user?.id) {
+      setError('Sign in before submitting a verification request.')
+      return
+    }
 
     // Validation - make sure required fields are filled
     const cleanDoi = normalizeDoi(formData.paper_doi || '')
@@ -150,6 +172,8 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
       // Log the data being submitted
       const submissionData = {
         ...formData,
+        user_id: user.id,
+        is_public: Boolean(formData.is_public),
         paper_doi: cleanDoi,
         file_urls: fileUrls,
       }
@@ -179,7 +203,8 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
         experiment_data: '',
         technique_used: '',
         permeability_result: 'moderate',
-        submitted_by: '',
+        is_public: false,
+        submitted_by: user.email || '',
       })
       setUploadedFiles([])
 
@@ -193,6 +218,22 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  if (!isAuthReady) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6 max-w-2xl">
+        <p className="text-sm text-gray-600">Loading account...</p>
+      </div>
+    )
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className="max-w-2xl">
+        <LoginPanel />
+      </div>
+    )
   }
 
   return (
@@ -453,6 +494,54 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Visibility Section */}
+        <div className="border-t border-gray-200 pt-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Submission Visibility</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <label
+              className={`p-4 border-2 rounded-lg cursor-pointer transition ${
+                formData.is_public
+                  ? 'border-blue-600 bg-blue-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <input
+                type="radio"
+                name="is_public"
+                value="true"
+                checked={formData.is_public === true}
+                onChange={handleInputChange}
+                className="mr-2"
+              />
+              <span className="font-medium text-gray-900">Public</span>
+              <p className="mt-2 text-sm text-gray-600">
+                Anyone can view this submission in past submissions.
+              </p>
+            </label>
+
+            <label
+              className={`p-4 border-2 rounded-lg cursor-pointer transition ${
+                !formData.is_public
+                  ? 'border-blue-600 bg-blue-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <input
+                type="radio"
+                name="is_public"
+                value="false"
+                checked={formData.is_public !== true}
+                onChange={handleInputChange}
+                className="mr-2"
+              />
+              <span className="font-medium text-gray-900">Private</span>
+              <p className="mt-2 text-sm text-gray-600">
+                Only you can view this submission from your profile.
+              </p>
+            </label>
+          </div>
         </div>
 
         {/* Submit Button */}

@@ -131,9 +131,8 @@ export function FilterPanel({
             onChange={(value) => updateFilter('bbb_tag', value || undefined)}
             options={[
               { label: 'All', value: 'all' },
-              { label: 'BBB positive', value: 'positive' },
-              { label: 'BBB negative', value: 'negative' },
-              { label: 'Unknown or unlabeled', value: 'unknown' },
+              { label: 'BBB+', value: 'BBB+' },
+              { label: 'BBB-', value: 'BBB-' },
             ]}
           />
 

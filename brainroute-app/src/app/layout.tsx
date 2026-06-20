@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { AppProviders } from '@/src/components/providers/AppProviders'
 
 export const metadata: Metadata = {
   title: 'BrainRoute - BBB Permeability Platform',
@@ -14,7 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-gray-50">{children}</body>
+      <body className="bg-gray-50">
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   )
 }

@@ -21,8 +21,8 @@ function normalizeSearchTerm(value: any): string {
 }
 
 function applyPortalFilters(query: any, filters: FilterState) {
-  if (filters.bbb_tag) {
-    query = query.ilike('bbb_tag', `%${normalizeSearchTerm(filters.bbb_tag)}%`)
+  if (filters.bbb_tag && filters.bbb_tag !== 'all') {
+    query = query.eq('bbb_tag', filters.bbb_tag)
   }
 
   if (filters.tag) {
@@ -45,6 +45,63 @@ function applyPortalFilters(query: any, filters: FilterState) {
   }
 
   return query
+}
+
+function applyBaseFilters(query: any, filters: FilterState) {
+  if (filters.search) {
+    const searchTerm = normalizeSearchTerm(filters.search)
+    query = query.or(
+      `name.ilike.%${searchTerm}%,smiles.ilike.%${searchTerm}%,bbb_tag.ilike.%${searchTerm}%`
+    )
+  }
+
+  if (filters.search_smiles) {
+    query = query.ilike('smiles', `%${filters.search_smiles}%`)
+  }
+
+  if (filters.tpsa_bin && filters.tpsa_bin !== 'all') {
+    query = query.eq('tpsa_bin', filters.tpsa_bin)
+  }
+
+  if (filters.logp_bin && filters.logp_bin !== 'all') {
+    query = query.eq('logp_bin', filters.logp_bin)
+  }
+
+  if (filters.mw_bin && filters.mw_bin !== 'all') {
+    query = query.eq('mw_bin', filters.mw_bin)
+  }
+
+  if (filters.lipinski_pass !== undefined && filters.lipinski_pass !== null) {
+    query = query.eq('lipinski_pass', filters.lipinski_pass)
+  }
+
+  if (filters.veber_pass !== undefined && filters.veber_pass !== null) {
+    query = query.eq('veber_pass', filters.veber_pass)
+  }
+
+  if (filters.egan_pass !== undefined && filters.egan_pass !== null) {
+    query = query.eq('egan_pass', filters.egan_pass)
+  }
+
+  if (filters.ghose_pass !== undefined && filters.ghose_pass !== null) {
+    query = query.eq('ghose_pass', filters.ghose_pass)
+  }
+
+  if (filters.pains_flag !== undefined && filters.pains_flag !== null) {
+    query = query.eq('pains_flag', filters.pains_flag)
+  }
+
+  if (filters.aromatic !== undefined && filters.aromatic !== null) {
+    query = query.eq('aromatic', filters.aromatic)
+  }
+
+  if (filters.heterocycle_present !== undefined && filters.heterocycle_present !== null) {
+    query = query.eq('heterocycle_present', filters.heterocycle_present)
+  }
+
+  query = applyPortalFilters(query, filters)
+
+  return applyNumericRangeFilters(query, filters)
 }
 
 function applyNumericRangeFilters(query: any, filters: FilterState) {
@@ -90,63 +147,7 @@ export async function queryMolecules(
 ): Promise<DataPreviewResponse> {
   try {
     let query = supabase.from(TABLE_NAME).select('*', { count: 'exact' })
-
-    // Apply text search
-    if (filters.search) {
-      const searchTerm = normalizeSearchTerm(filters.search)
-      query = query.or(
-        `name.ilike.%${searchTerm}%,smiles.ilike.%${searchTerm}%,bbb_tag.ilike.%${searchTerm}%`
-      )
-    }
-    if (filters.search_smiles) {
-      query = query.ilike('smiles', `%${filters.search_smiles}%`)
-    }
-
-    // Apply categorical filters
-    if (filters.tpsa_bin && filters.tpsa_bin !== 'all') {
-      query = query.eq('tpsa_bin', filters.tpsa_bin)
-    }
-
-    if (filters.logp_bin && filters.logp_bin !== 'all') {
-      query = query.eq('logp_bin', filters.logp_bin)
-    }
-
-    if (filters.mw_bin && filters.mw_bin !== 'all') {
-      query = query.eq('mw_bin', filters.mw_bin)
-    }
-
-    // Apply drug rule filters
-    if (filters.lipinski_pass !== undefined && filters.lipinski_pass !== null) {
-      query = query.eq('lipinski_pass', filters.lipinski_pass)
-    }
-
-    if (filters.veber_pass !== undefined && filters.veber_pass !== null) {
-      query = query.eq('veber_pass', filters.veber_pass)
-    }
-
-    if (filters.egan_pass !== undefined && filters.egan_pass !== null) {
-      query = query.eq('egan_pass', filters.egan_pass)
-    }
-
-    if (filters.ghose_pass !== undefined && filters.ghose_pass !== null) {
-      query = query.eq('ghose_pass', filters.ghose_pass)
-    }
-
-    if (filters.pains_flag !== undefined && filters.pains_flag !== null) {
-      query = query.eq('pains_flag', filters.pains_flag)
-    }
-
-    if (filters.aromatic !== undefined && filters.aromatic !== null) {
-      query = query.eq('aromatic', filters.aromatic)
-    }
-
-    if (filters.heterocycle_present !== undefined && filters.heterocycle_present !== null) {
-      query = query.eq('heterocycle_present', filters.heterocycle_present)
-    }
-
-    query = applyPortalFilters(query, filters)
-
-    query = applyNumericRangeFilters(query, filters)
+    query = applyBaseFilters(query, filters)
 
     // Apply sorting
     const orderBy = sortBy || 'id'
@@ -184,61 +185,7 @@ export async function queryMolecules(
 export async function getFilteredCount(filters: FilterState): Promise<number> {
   try {
     let query = supabase.from(TABLE_NAME).select('id', { count: 'exact', head: true })
-
-    if (filters.search) {
-      const searchTerm = normalizeSearchTerm(filters.search)
-      query = query.or(
-        `name.ilike.%${searchTerm}%,smiles.ilike.%${searchTerm}%,bbb_tag.ilike.%${searchTerm}%`
-      )
-    }
-    if (filters.search_smiles) {
-      query = query.ilike('smiles', `%${filters.search_smiles}%`)
-    }
-
-    if (filters.tpsa_bin && filters.tpsa_bin !== 'all') {
-      query = query.eq('tpsa_bin', filters.tpsa_bin)
-    }
-
-    if (filters.logp_bin && filters.logp_bin !== 'all') {
-      query = query.eq('logp_bin', filters.logp_bin)
-    }
-
-    if (filters.mw_bin && filters.mw_bin !== 'all') {
-      query = query.eq('mw_bin', filters.mw_bin)
-    }
-
-    // Apply drug rule filters
-    if (filters.lipinski_pass !== undefined && filters.lipinski_pass !== null) {
-      query = query.eq('lipinski_pass', filters.lipinski_pass)
-    }
-
-    if (filters.veber_pass !== undefined && filters.veber_pass !== null) {
-      query = query.eq('veber_pass', filters.veber_pass)
-    }
-
-    if (filters.egan_pass !== undefined && filters.egan_pass !== null) {
-      query = query.eq('egan_pass', filters.egan_pass)
-    }
-
-    if (filters.ghose_pass !== undefined && filters.ghose_pass !== null) {
-      query = query.eq('ghose_pass', filters.ghose_pass)
-    }
-
-    if (filters.pains_flag !== undefined && filters.pains_flag !== null) {
-      query = query.eq('pains_flag', filters.pains_flag)
-    }
-
-    if (filters.aromatic !== undefined && filters.aromatic !== null) {
-      query = query.eq('aromatic', filters.aromatic)
-    }
-
-    if (filters.heterocycle_present !== undefined && filters.heterocycle_present !== null) {
-      query = query.eq('heterocycle_present', filters.heterocycle_present)
-    }
-
-    query = applyPortalFilters(query, filters)
-
-    query = applyNumericRangeFilters(query, filters)
+    query = applyBaseFilters(query, filters)
 
     const { count, error } = await query
 
@@ -258,60 +205,7 @@ export async function getFilteredCount(filters: FilterState): Promise<number> {
 export async function getFilteredDataForExport(filters: FilterState): Promise<Molecule[]> {
   try {
     let query = supabase.from(TABLE_NAME).select('*')
-
-    if (filters.search) {
-      const searchTerm = normalizeSearchTerm(filters.search)
-      query = query.or(
-        `name.ilike.%${searchTerm}%,smiles.ilike.%${searchTerm}%,bbb_tag.ilike.%${searchTerm}%`
-      )
-    }
-    if (filters.search_smiles) {
-      query = query.ilike('smiles', `%${filters.search_smiles}%`)
-    }
-
-    if (filters.tpsa_bin && filters.tpsa_bin !== 'all') {
-      query = query.eq('tpsa_bin', filters.tpsa_bin)
-    }
-
-    if (filters.logp_bin && filters.logp_bin !== 'all') {
-      query = query.eq('logp_bin', filters.logp_bin)
-    }
-
-    if (filters.mw_bin && filters.mw_bin !== 'all') {
-      query = query.eq('mw_bin', filters.mw_bin)
-    }
-
-    if (filters.lipinski_pass !== undefined && filters.lipinski_pass !== null) {
-      query = query.eq('lipinski_pass', filters.lipinski_pass)
-    }
-
-    if (filters.veber_pass !== undefined && filters.veber_pass !== null) {
-      query = query.eq('veber_pass', filters.veber_pass)
-    }
-
-    if (filters.egan_pass !== undefined && filters.egan_pass !== null) {
-      query = query.eq('egan_pass', filters.egan_pass)
-    }
-
-    if (filters.ghose_pass !== undefined && filters.ghose_pass !== null) {
-      query = query.eq('ghose_pass', filters.ghose_pass)
-    }
-
-    if (filters.pains_flag !== undefined && filters.pains_flag !== null) {
-      query = query.eq('pains_flag', filters.pains_flag)
-    }
-
-    if (filters.aromatic !== undefined && filters.aromatic !== null) {
-      query = query.eq('aromatic', filters.aromatic)
-    }
-
-    if (filters.heterocycle_present !== undefined && filters.heterocycle_present !== null) {
-      query = query.eq('heterocycle_present', filters.heterocycle_present)
-    }
-
-    query = applyPortalFilters(query, filters)
-
-    query = applyNumericRangeFilters(query, filters)
+    query = applyBaseFilters(query, filters)
 
     const { data, error } = await query
 

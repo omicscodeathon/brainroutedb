@@ -7,7 +7,11 @@
 }
 
 body {
-  @apply bg-gray-50 text-gray-900;
+  @apply text-gray-900;
+  background:
+    radial-gradient(circle at top left, rgba(147, 197, 253, 0.38), transparent 34rem),
+    linear-gradient(135deg, #dbeafe 0%, #bfdbfe 48%, #dbeafe 100%);
+  min-height: 100vh;
 }
 
 html {
@@ -47,6 +51,48 @@ html {
 
 .pulse-slow {
   animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+section[class*='border'],
+aside[class*='border'],
+div[class*='border'],
+article[class*='border'],
+nav[class*='border'],
+table,
+input,
+textarea,
+select,
+button,
+a[class*='border'] {
+  border-radius: 0.5rem;
+}
+
+section[class*='bg-white'],
+aside[class*='bg-white'],
+div[class*='bg-white'],
+article[class*='bg-white'] {
+  background-color: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+div[class*='bg-slate-50'],
+section[class*='bg-slate-50'],
+aside[class*='bg-slate-50'] {
+  background-color: rgba(248, 250, 252, 0.58) !important;
+}
+
+div[class*='bg-blue-50'],
+section[class*='bg-blue-50'],
+aside[class*='bg-blue-50'] {
+  background-color: rgba(219, 234, 254, 0.7) !important;
+}
+
+div[class*='min-h-screen'][class*='bg-slate-100'],
+div[class*='min-h-screen'][class*='bg-blue-50'] {
+  background:
+    radial-gradient(circle at top left, rgba(147, 197, 253, 0.38), transparent 34rem),
+    linear-gradient(135deg, #dbeafe 0%, #bfdbfe 48%, #dbeafe 100%) !important;
 }
 
 @keyframes pulse-slow {

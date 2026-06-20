@@ -19,6 +19,8 @@ export interface VerificationSubmission {
   technique_used: string // e.g., "MDCK cells", "Caco-2", "In silico"
   permeability_result: 'permeable' | 'nonpermeable' | 'moderate' // User's finding
   file_urls?: string[] // URLs to uploaded files in Supabase Storage
+  user_id?: string | null
+  is_public?: boolean | null
   submitted_by: string // Email or name
   submitted_at?: string
   verified_by_admin?: boolean

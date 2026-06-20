@@ -10,6 +10,8 @@ import { Download } from 'lucide-react'
 import type { FilterState } from '@/lib/types'
 import { getFilteredDataForExport } from '@/lib/queries/brainroute'
 import { exportMoleculesAsCSV } from '@/lib/utils/csv-export'
+import { useAuth } from '@/src/components/auth/AuthProvider'
+import { logDownloadEvent } from '@/lib/queries/user-activity'
 
 interface DownloadDataProps {
   filters: FilterState
@@ -17,6 +19,7 @@ interface DownloadDataProps {
 }
 
 export function DownloadData({ filters, totalRecords }: DownloadDataProps) {
+  const { user } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -35,6 +38,15 @@ export function DownloadData({ filters, totalRecords }: DownloadDataProps) {
 
       // Generate CSV and trigger download
       exportMoleculesAsCSV(data)
+
+      if (user?.id) {
+        logDownloadEvent({
+          userId: user.id,
+          downloadType: 'filtered_csv',
+          filterState: filters,
+          recordCount: data.length,
+        })
+      }
     } catch (err) {
       setError('Failed to download data. Please try again.')
       console.error(err)

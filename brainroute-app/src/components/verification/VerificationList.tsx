@@ -96,6 +96,11 @@ export function VerificationList({ refreshTrigger }: VerificationListProps) {
 
                 {/* Status Badge */}
                 <div className="flex items-center gap-2">
+                  <div className="px-3 py-1 rounded-full border border-slate-200 bg-slate-50">
+                    <span className="text-xs font-medium text-slate-700">
+                      {submission.is_public ? 'Public' : 'Private'}
+                    </span>
+                  </div>
                   {submission.verified_by_admin ? (
                     <div className="flex items-center gap-1 px-3 py-1 bg-green-50 border border-green-200 rounded-full">
                       <CheckCircle className="h-4 w-4 text-green-600" />
