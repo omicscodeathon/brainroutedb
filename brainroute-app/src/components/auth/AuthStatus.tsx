@@ -18,7 +18,7 @@ export function AuthStatus() {
         href="/account"
         className="inline-flex items-center border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
       >
-        Sign in
+        Sign in/up
       </Link>
     )
   }
