@@ -5,7 +5,10 @@ import {
   Database,
   FileArchive,
   FlaskConical,
+  Globe2,
+  LockKeyhole,
   SearchCheck,
+  ShieldCheck,
 } from 'lucide-react'
 import { Header } from '@/src/components/Header'
 
@@ -53,6 +56,28 @@ const submissionFields = [
   'Supporting PDF, CSV, PNG, or JPEG files',
 ]
 
+const visibilityChoices = [
+  {
+    title: 'Public submission',
+    description:
+      'The submission can appear in the past submissions list for all visitors, including users who are not signed in. Supporting files attached to a public submission can be opened from that public record.',
+    icon: Globe2,
+  },
+  {
+    title: 'Private submission',
+    description:
+      'The submission is linked to your signed-in account and is only shown to you in your profile and authenticated submission views.',
+    icon: LockKeyhole,
+  },
+]
+
+const savedInformation = [
+  'Your account ID is saved with the submission so the record can appear in your profile.',
+  'The molecule, experimental method, result details, notes, DOI, and uploaded supporting files are saved as part of the verification record.',
+  'BrainRoute does not publish private submissions in the public past submissions list.',
+  'Do not upload confidential or restricted data unless you are comfortable storing it in BrainRoute.',
+]
+
 export default function VerifyIntroPage() {
   return (
     <div className="min-h-screen bg-slate-100">
@@ -93,6 +118,52 @@ export default function VerifyIntroPage() {
         <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
             <div className="space-y-6">
+              <section className="border border-blue-200 bg-white">
+                <div className="border-b border-blue-100 bg-blue-50 px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck className="h-6 w-6 text-blue-700" />
+                    <h2 className="text-xl font-bold text-slate-950">
+                      Before You Submit
+                    </h2>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-slate-700">
+                    Verification submissions require sign-in so BrainRoute can connect each
+                    record to the submitting account. At the end of the form, you choose whether
+                    the submission is public or private.
+                  </p>
+                </div>
+
+                <div className="grid gap-4 p-6 md:grid-cols-2">
+                  {visibilityChoices.map((choice) => {
+                    const Icon = choice.icon
+                    return (
+                      <article key={choice.title} className="border border-slate-200 p-5">
+                        <Icon className="h-6 w-6 text-blue-700" />
+                        <h3 className="mt-4 text-lg font-bold text-slate-950">
+                          {choice.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-6 text-slate-600">
+                          {choice.description}
+                        </p>
+                      </article>
+                    )
+                  })}
+                </div>
+
+                <div className="border-t border-slate-200 px-6 py-5">
+                  <h3 className="text-sm font-bold uppercase text-slate-600">
+                    What is saved
+                  </h3>
+                  <ul className="mt-3 grid gap-3 md:grid-cols-2">
+                    {savedInformation.map((item) => (
+                      <li key={item} className="text-sm leading-6 text-slate-700">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+
               <section className="border border-slate-200 bg-white">
                 <div className="border-b border-slate-200 bg-slate-50 px-6 py-4">
                   <h2 className="text-xl font-bold text-slate-950">Verification Workflow</h2>

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, CheckCircle2, Database, FileText } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Database, FileText, ShieldCheck, UserRound } from 'lucide-react'
 import { Header } from '@/src/components/Header'
 
 const whatsNew = [
@@ -9,6 +9,27 @@ const whatsNew = [
   'Molecule detail pages with computed properties and BrainRoute tags',
   'External Streamlit prediction tool for novel molecule screening',
   'Static GitHub Pages deployment for broad public access',
+]
+
+const accountDetails = [
+  {
+    title: 'Browsing does not require an account',
+    description:
+      'You can search, filter, visualize, and download the public BrainRoute molecule dataset without signing in.',
+    icon: Database,
+  },
+  {
+    title: 'Sign in/up connects activity to your profile',
+    description:
+      'Google sign-in and email magic links are handled by Supabase Auth. After sign-in, your profile can show linked verification submissions, prediction runs, and download history.',
+    icon: UserRound,
+  },
+  {
+    title: 'Private records stay account-linked',
+    description:
+      'Private verification submissions are shown only to the submitting account. Public submissions remain visible to visitors in the past submissions list.',
+    icon: ShieldCheck,
+  },
 ]
 
 const metricSections = [
@@ -159,7 +180,7 @@ export default function GettingStartedPage() {
               <Link href="/downloads" className="block text-blue-700 hover:text-blue-900">
                 Download data
               </Link>
-              <Link href="/verify-data" className="block text-blue-700 hover:text-blue-900">
+              <Link href="/verify" className="block text-blue-700 hover:text-blue-900">
                 Verify records
               </Link>
             </nav>
@@ -177,6 +198,34 @@ export default function GettingStartedPage() {
                 verification tags, download CSV exports, and move from database records to the
                 external prediction workflow when screening new molecules.
               </p>
+            </section>
+
+            <section className="border border-slate-200 bg-white p-6">
+              <div className="flex items-center gap-3">
+                <ShieldCheck className="h-6 w-6 text-blue-700" />
+                <h2 className="text-2xl font-bold text-slate-950">
+                  Accounts, Sign-In, and Privacy
+                </h2>
+              </div>
+              <p className="mt-4 text-sm leading-7 text-slate-700">
+                BrainRoute keeps the public molecule database accessible while using accounts
+                for workflows that need activity tracking. Signing in is required for
+                verification submissions and optional for browsing public data.
+              </p>
+              <div className="mt-5 grid gap-4 md:grid-cols-3">
+                {accountDetails.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <article key={item.title} className="border border-slate-200 bg-slate-50 p-4">
+                      <Icon className="h-5 w-5 text-blue-700" />
+                      <h3 className="mt-3 text-sm font-bold text-slate-950">{item.title}</h3>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">
+                        {item.description}
+                      </p>
+                    </article>
+                  )
+                })}
+              </div>
             </section>
 
             <section className="border border-slate-200 bg-white p-6">

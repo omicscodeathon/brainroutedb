@@ -7,14 +7,20 @@
 
 import React, { useEffect, useState } from 'react'
 import { Upload, X, AlertCircle } from 'lucide-react'
-import type { VerificationSubmission } from '@/lib/types/verification'
-import { submitVerification } from '@/lib/queries/verification'
+import {
+  getVerificationProgress,
+  VERIFICATION_PROGRESS_LABELS,
+  type VerificationSubmission,
+} from '@/lib/types/verification'
+import { submitVerification, updateVerificationSubmission } from '@/lib/queries/verification'
 import { uploadVerificationFiles } from '@/lib/supabase/storage'
 import { useAuth } from '@/src/components/auth/AuthProvider'
 import { LoginPanel } from '@/src/components/auth/LoginPanel'
 
 interface VerificationFormProps {
   onSuccess?: () => void
+  mode?: 'create' | 'edit'
+  initialSubmission?: VerificationSubmission
 }
 
 const DOI_PATTERN = /^10\.\d{4,9}\/[-._;()/:A-Z0-9]+$/i
@@ -31,15 +37,8 @@ function isValidDoi(value: string): boolean {
   return DOI_PATTERN.test(normalizeDoi(value))
 }
 
-export function VerificationForm({ onSuccess }: VerificationFormProps) {
-  const { user, isAuthReady, isLoggedIn } = useAuth()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [doiWarning, setDoiWarning] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-
-  const [formData, setFormData] = useState<VerificationSubmission>({
+function createEmptySubmission(email?: string): VerificationSubmission {
+  return {
     molecule_name: '',
     molecule_information: '',
     paper_doi: '',
@@ -50,11 +49,65 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
     technique_used: '',
     permeability_result: 'moderate',
     is_public: false,
-    submitted_by: '',
-  })
+    progress_status: 'submitted',
+    submitted_by: email || '',
+  }
+}
+
+function normalizeSubmissionForForm(
+  submission?: VerificationSubmission,
+  email?: string
+): VerificationSubmission {
+  if (!submission) return createEmptySubmission(email)
+
+  return {
+    ...createEmptySubmission(email),
+    ...submission,
+    molecule_name: submission.molecule_name || '',
+    molecule_information: submission.molecule_information || '',
+    paper_doi: submission.paper_doi || '',
+    lab_name: submission.lab_name || '',
+    institution_name: submission.institution_name || '',
+    experiment_description: submission.experiment_description || '',
+    experiment_data: submission.experiment_data || '',
+    technique_used: submission.technique_used || '',
+    permeability_result: submission.permeability_result || 'moderate',
+    is_public: submission.is_public === true,
+    progress_status: getVerificationProgress(submission),
+    submitted_by: submission.submitted_by || email || '',
+    file_urls: submission.file_urls || [],
+  }
+}
+
+export function VerificationForm({
+  onSuccess,
+  mode = 'create',
+  initialSubmission,
+}: VerificationFormProps) {
+  const { user, isAuthReady, isLoggedIn } = useAuth()
+  const isEditMode = mode === 'edit'
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [doiWarning, setDoiWarning] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  const [existingFileUrls, setExistingFileUrls] = useState<string[]>(
+    initialSubmission?.file_urls || []
+  )
+
+  const [formData, setFormData] = useState<VerificationSubmission>(() =>
+    normalizeSubmissionForForm(initialSubmission, user?.email || undefined)
+  )
 
   useEffect(() => {
-    if (!user?.email) return
+    if (!isEditMode) return
+
+    setFormData(normalizeSubmissionForForm(initialSubmission, user?.email || undefined))
+    setExistingFileUrls(initialSubmission?.file_urls || [])
+  }, [initialSubmission, isEditMode, user?.email])
+
+  useEffect(() => {
+    if (!user?.email || isEditMode) return
 
     setFormData((prev) => {
       if (prev.submitted_by.trim()) return prev
@@ -64,7 +117,7 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
         submitted_by: user.email || '',
       }
     })
-  }, [user?.email])
+  }, [user?.email, isEditMode])
 
   // Handle form input changes
   const handleInputChange = (
@@ -88,6 +141,7 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
+    const availableSlots = Math.max(0, 10 - existingFileUrls.length - uploadedFiles.length)
     
     // Only allow PDFs, images, and CSVs
     const validFiles = files.filter(file => {
@@ -100,12 +154,21 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
       return
     }
 
+    if (validFiles.length > availableSlots) {
+      setError(`You can add ${availableSlots} more file${availableSlots === 1 ? '' : 's'}.`)
+      return
+    }
+
     setUploadedFiles(prev => [...prev, ...validFiles])
   }
 
   // Remove file from upload list
   const removeFile = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const removeExistingFile = (index: number) => {
+    setExistingFileUrls(prev => prev.filter((_, i) => i !== index))
   }
 
   // Handle form submission
@@ -159,14 +222,17 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
 
     try {
       // Generate submission ID for file storage
-      const submissionId = `submission_${Date.now()}`
+      const submissionId = isEditMode && initialSubmission?.id
+        ? initialSubmission.id
+        : `submission_${Date.now()}`
 
       // Upload files if any
-      let fileUrls: string[] = []
+      let fileUrls: string[] = [...existingFileUrls]
       if (uploadedFiles.length > 0) {
         console.log(`[VerificationForm] Starting file upload for ${uploadedFiles.length} files`)
-        fileUrls = await uploadVerificationFiles(submissionId, uploadedFiles)
-        console.log(`[VerificationForm] File upload complete. URLs:`, fileUrls)
+        const newFileUrls = await uploadVerificationFiles(submissionId, uploadedFiles)
+        fileUrls = [...fileUrls, ...newFileUrls]
+        console.log(`[VerificationForm] File upload complete. URLs:`, newFileUrls)
       }
 
       // Log the data being submitted
@@ -182,8 +248,9 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
         file_urls: `[Array of ${fileUrls.length} URLs]`
       })
 
-      // Submit verification
-      const result = await submitVerification(submissionData)
+      const result = isEditMode && initialSubmission?.id
+        ? await updateVerificationSubmission(initialSubmission.id, user.id, submissionData)
+        : await submitVerification(submissionData)
 
       console.log('[VerificationForm] Submit result:', result)
 
@@ -193,19 +260,16 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
 
       // Success
       setSuccess(true)
-      setFormData({
-        molecule_name: '',
-        molecule_information: '',
-        paper_doi: '',
-        lab_name: '',
-        institution_name: '',
-        experiment_description: '',
-        experiment_data: '',
-        technique_used: '',
-        permeability_result: 'moderate',
-        is_public: false,
-        submitted_by: user.email || '',
-      })
+      if (!isEditMode) {
+        setFormData(createEmptySubmission(user.email || ''))
+        setExistingFileUrls([])
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          file_urls: fileUrls,
+        }))
+        setExistingFileUrls(fileUrls)
+      }
       setUploadedFiles([])
 
       // Call callback
@@ -238,7 +302,21 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
 
   return (
     <div className="bg-white rounded-lg shadow p-6 max-w-2xl">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Submit Molecule Verification</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        {isEditMode ? 'Edit Molecule Verification' : 'Submit Molecule Verification'}
+      </h2>
+
+      {isEditMode && (
+        <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <p className="text-sm font-medium text-slate-600">Progress</p>
+          <div className="mt-2 inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-bold text-blue-700">
+            {VERIFICATION_PROGRESS_LABELS[getVerificationProgress(formData)]}
+          </div>
+          <p className="mt-2 text-xs leading-5 text-slate-600">
+            Progress is managed during review. You can edit the submission details and visibility.
+          </p>
+        </div>
+      )}
 
       {/* Error Alert */}
       {error && (
@@ -252,7 +330,9 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
       {success && (
         <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
           <p className="text-green-700 text-sm font-semibold">
-            ✓ Verification submitted successfully! Your data will be reviewed by our team.
+            {isEditMode
+              ? 'Verification updated successfully.'
+              : '✓ Verification submitted successfully! Your data will be reviewed by our team.'}
           </p>
         </div>
       )}
@@ -458,7 +538,7 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
               className="hidden"
               id="file-upload"
               accept=".pdf,.png,.jpg,.jpeg,.csv"
-              disabled={uploadedFiles.length >= 10}
+              disabled={existingFileUrls.length + uploadedFiles.length >= 10}
             />
             <label htmlFor="file-upload" className="cursor-pointer">
               <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
@@ -470,10 +550,43 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
           </div>
 
           {/* Uploaded Files List */}
+          {existingFileUrls.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-medium text-gray-900 mb-2">
+                Existing Files ({existingFileUrls.length})
+              </h4>
+              <div className="space-y-2">
+                {existingFileUrls.map((url, idx) => (
+                  <div
+                    key={url}
+                    className="flex items-center justify-between gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200"
+                  >
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="truncate text-sm font-medium text-blue-700 hover:underline"
+                    >
+                      File {idx + 1}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => removeExistingFile(idx)}
+                      className="text-gray-400 hover:text-red-600 transition"
+                      aria-label={`Remove existing file ${idx + 1}`}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {uploadedFiles.length > 0 && (
             <div className="mt-4">
               <h4 className="font-medium text-gray-900 mb-2">
-                Files ({uploadedFiles.length}/10)
+                New Files ({existingFileUrls.length + uploadedFiles.length}/10)
               </h4>
               <div className="space-y-2">
                 {uploadedFiles.map((file, idx) => (
@@ -551,10 +664,14 @@ export function VerificationForm({ onSuccess }: VerificationFormProps) {
             disabled={isSubmitting}
             className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Verification'}
+            {isSubmitting
+              ? isEditMode ? 'Saving...' : 'Submitting...'
+              : isEditMode ? 'Save Changes' : 'Submit Verification'}
           </button>
           <p className="text-xs text-gray-600 mt-3 text-center">
-            Your submission will be reviewed by our team before being added to the database.
+            {isEditMode
+              ? 'Your saved changes remain linked to your account.'
+              : 'Your submission will be reviewed by our team before being added to the database.'}
           </p>
         </div>
       </form>

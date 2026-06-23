@@ -4,9 +4,32 @@
  */
 
 import { supabase } from '../supabase/client'
-import type { VerificationSubmission, VerificationFilter } from '../types/verification'
+import type {
+  VerificationSubmission,
+  VerificationFilter,
+  VerificationProgress,
+} from '../types/verification'
 
 const SUBMISSIONS_TABLE = 'verification_submissions'
+
+function buildEditableSubmissionPayload(submission: Partial<VerificationSubmission>) {
+  return {
+    molecule_id: submission.molecule_id,
+    molecule_name: submission.molecule_name,
+    smiles: submission.smiles,
+    molecule_information: submission.molecule_information,
+    paper_doi: submission.paper_doi,
+    lab_name: submission.lab_name,
+    institution_name: submission.institution_name,
+    experiment_description: submission.experiment_description,
+    experiment_data: submission.experiment_data,
+    technique_used: submission.technique_used,
+    permeability_result: submission.permeability_result,
+    file_urls: submission.file_urls,
+    submitted_by: submission.submitted_by,
+    is_public: submission.is_public,
+  }
+}
 
 /**
  * Submit a new verification entry
@@ -24,9 +47,8 @@ export async function submitVerification(
       .from(SUBMISSIONS_TABLE)
       .insert([
         {
-          ...submission,
-          created_at: new Date().toISOString(),
-          verified_by_admin: false,
+          ...buildEditableSubmissionPayload(submission),
+          user_id: submission.user_id,
         },
       ])
       .select('id')
@@ -52,6 +74,40 @@ export async function submitVerification(
       fullError: error
     })
     return { id: null, error: errorMsg }
+  }
+}
+
+/**
+ * Update an existing verification submission owned by the signed-in user.
+ * Progress status is intentionally not updated here; it is managed during review.
+ */
+export async function updateVerificationSubmission(
+  submissionId: string,
+  userId: string,
+  submission: Partial<VerificationSubmission>
+): Promise<{ error: null } | { error: string }> {
+  try {
+    const {
+      error,
+    } = await supabase
+      .from(SUBMISSIONS_TABLE)
+      .update({
+        ...buildEditableSubmissionPayload(submission),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', submissionId)
+      .eq('user_id', userId)
+
+    if (error) throw error
+
+    return { error: null }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error)
+    console.error('[updateVerificationSubmission] Failed to update verification:', {
+      message: errorMsg,
+      fullError: error,
+    })
+    return { error: errorMsg }
   }
 }
 
@@ -113,7 +169,7 @@ export async function getVerificationStats(): Promise<{
     const { count: verifiedCount } = await supabase
       .from(SUBMISSIONS_TABLE)
       .select('id', { count: 'exact', head: true })
-      .eq('verified_by_admin', true)
+      .eq('progress_status', 'accepted')
 
     return {
       total: totalCount || 0,
@@ -139,6 +195,7 @@ export async function updateVerificationStatus(
       .from(SUBMISSIONS_TABLE)
       .update({
         verified_by_admin: verified,
+        progress_status: verified ? 'accepted' : 'submitted',
         verification_notes: notes || null,
       })
       .eq('id', submissionId)
@@ -147,6 +204,29 @@ export async function updateVerificationStatus(
     return true
   } catch (error) {
     console.error('Failed to update verification status:', error)
+    return false
+  }
+}
+
+export async function updateVerificationProgress(
+  submissionId: string,
+  progressStatus: VerificationProgress,
+  notes?: string
+): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from(SUBMISSIONS_TABLE)
+      .update({
+        progress_status: progressStatus,
+        verified_by_admin: progressStatus === 'accepted',
+        verification_notes: notes || null,
+      })
+      .eq('id', submissionId)
+
+    if (error) throw error
+    return true
+  } catch (error) {
+    console.error('Failed to update verification progress:', error)
     return false
   }
 }

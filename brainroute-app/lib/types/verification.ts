@@ -5,6 +5,28 @@
 
 export type VerificationStatus = 'br_training' | 'br_user_verified' | 'predicted'
 
+export type VerificationProgress =
+  | 'submitted'
+  | 'in_review'
+  | 'accepted'
+  | 'denied'
+  | 'more_information_requested'
+
+export const VERIFICATION_PROGRESS_LABELS: Record<VerificationProgress, string> = {
+  submitted: 'Submitted',
+  in_review: 'In Review',
+  accepted: 'Accepted',
+  denied: 'Denied',
+  more_information_requested: 'More Information Requested',
+}
+
+export function getVerificationProgress(
+  submission: Pick<VerificationSubmission, 'progress_status' | 'verified_by_admin'>
+): VerificationProgress {
+  if (submission.progress_status) return submission.progress_status
+  return submission.verified_by_admin ? 'accepted' : 'submitted'
+}
+
 export interface VerificationSubmission {
   id?: string
   molecule_id?: number // If verifying existing molecule
@@ -21,11 +43,13 @@ export interface VerificationSubmission {
   file_urls?: string[] // URLs to uploaded files in Supabase Storage
   user_id?: string | null
   is_public?: boolean | null
+  progress_status?: VerificationProgress
   submitted_by: string // Email or name
   submitted_at?: string
   verified_by_admin?: boolean
   verification_notes?: string
   created_at?: string
+  updated_at?: string
 }
 
 export interface VerificationFilter {

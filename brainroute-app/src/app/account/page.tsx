@@ -1,10 +1,14 @@
 'use client'
 
+import Link from 'next/link'
+import type { ReactNode } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+import { Pencil } from 'lucide-react'
 import { Header } from '@/src/components/Header'
 import { LoginPanel } from '@/src/components/auth/LoginPanel'
 import { OpenPredictionToolButton } from '@/src/components/auth/OpenPredictionToolButton'
 import { useAuth } from '@/src/components/auth/AuthProvider'
+import { VerificationProgressBadge } from '@/src/components/verification/VerificationProgressBadge'
 import {
   getMyDownloadEvents,
   getMyPredictionBatches,
@@ -24,7 +28,11 @@ function ActivityTable({
 }: {
   title: string
   rows: Record<string, any>[]
-  columns: Array<{ key: string; label: string; render?: (row: Record<string, any>) => string }>
+  columns: Array<{
+    key: string
+    label: string
+    render?: (row: Record<string, any>) => ReactNode
+  }>
 }) {
   return (
     <section className="border border-slate-200 bg-white p-6">
@@ -204,8 +212,21 @@ export default function AccountPage() {
                 { key: 'molecule_name', label: 'Molecule' },
                 { key: 'permeability_result', label: 'Result' },
                 { key: 'is_public', label: 'Visibility', render: (row) => row.is_public ? 'Public' : 'Private' },
-                { key: 'verified_by_admin', label: 'Reviewed', render: (row) => row.verified_by_admin ? 'Yes' : 'No' },
+                { key: 'progress_status', label: 'Progress', render: (row) => <VerificationProgressBadge submission={row} /> },
                 { key: 'created_at', label: 'Created', render: (row) => formatDate(row.created_at) },
+                {
+                  key: 'edit',
+                  label: '',
+                  render: (row) => row.id ? (
+                    <Link
+                      href={`/verify-data/edit?id=${row.id}`}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
+                      aria-label={`Edit verification submission for ${row.molecule_name || 'molecule'}`}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                  ) : '-',
+                },
               ]}
             />
           </div>

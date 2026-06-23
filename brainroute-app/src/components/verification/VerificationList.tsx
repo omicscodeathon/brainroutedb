@@ -6,9 +6,10 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, CheckCircle, Clock, Download } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react'
 import type { VerificationSubmission } from '@/lib/types/verification'
 import { getVerifications } from '@/lib/queries/verification'
+import { VerificationProgressBadge } from '@/src/components/verification/VerificationProgressBadge'
 
 interface VerificationListProps {
   refreshTrigger?: number
@@ -101,17 +102,7 @@ export function VerificationList({ refreshTrigger }: VerificationListProps) {
                       {submission.is_public ? 'Public' : 'Private'}
                     </span>
                   </div>
-                  {submission.verified_by_admin ? (
-                    <div className="flex items-center gap-1 px-3 py-1 bg-green-50 border border-green-200 rounded-full">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-xs font-medium text-green-700">Verified</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1 px-3 py-1 bg-yellow-50 border border-yellow-200 rounded-full">
-                      <Clock className="h-4 w-4 text-yellow-600" />
-                      <span className="text-xs font-medium text-yellow-700">Pending</span>
-                    </div>
-                  )}
+                  <VerificationProgressBadge submission={submission} />
                 </div>
               </div>
 
