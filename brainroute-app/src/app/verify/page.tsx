@@ -78,6 +78,33 @@ const savedInformation = [
   'Do not upload confidential or restricted data unless you are comfortable storing it in BrainRoute.',
 ]
 
+const afterSubmissionDetails = [
+  'You can view your own verification submissions from My Profile after signing in.',
+  'Use the edit button in My Profile to update submitted details, add information, remove information, change visibility, or adjust the attachment links stored with the submission.',
+  'Progress is managed during review and is shown to you on your profile and submission views.',
+]
+
+const progressStages = [
+  {
+    title: 'Submitted',
+    description: 'The submission has been received and is linked to your BrainRoute account.',
+  },
+  {
+    title: 'In Review',
+    description: 'The submitted evidence is being checked for completeness and relevance.',
+  },
+  {
+    title: 'Accepted/Denied',
+    description:
+      'The submission has reached a review decision and may be accepted as verification evidence or denied if it cannot be used.',
+  },
+  {
+    title: 'More Information Requested',
+    description:
+      'Additional details, files, or clarification are needed before the submission can be reviewed further.',
+  },
+]
+
 export default function VerifyIntroPage() {
   return (
     <div className="min-h-screen bg-slate-100">
@@ -161,6 +188,31 @@ export default function VerifyIntroPage() {
                       </li>
                     ))}
                   </ul>
+                </div>
+
+                <div className="border-t border-slate-200 px-6 py-5">
+                  <h3 className="text-sm font-bold uppercase text-slate-600">
+                    After you submit
+                  </h3>
+                  <ul className="mt-3 grid gap-3">
+                    {afterSubmissionDetails.map((item) => (
+                      <li key={item} className="text-sm leading-6 text-slate-700">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-5 grid gap-3 md:grid-cols-2">
+                    {progressStages.map((stage) => (
+                      <article key={stage.title} className="border border-slate-200 bg-slate-50 p-4">
+                        <h4 className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-800">
+                          {stage.title}
+                        </h4>
+                        <p className="mt-1 text-xs leading-5 text-slate-600">
+                          {stage.description}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
                 </div>
               </section>
 
