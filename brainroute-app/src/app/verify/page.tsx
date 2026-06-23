@@ -28,7 +28,7 @@ const workflowSteps = [
   {
     title: 'Attach supporting files',
     description:
-      'Upload papers, CSV tables, images, or result summaries so reviewers can inspect the source evidence.',
+      'Upload papers, CSV tables, images, or result summaries so the BrainRoute review team can inspect the source evidence.',
     icon: FileArchive,
   },
   {
@@ -245,10 +245,10 @@ export default function VerifyIntroPage() {
                     </h2>
                     <p className="mt-3 text-sm leading-6 text-slate-700">
                       New submissions are stored as verification records with pending status.
-                      Supporting files are stored separately so reviewers can inspect methodology
-                      and source evidence. After review, accepted records can be linked to an
-                      existing molecule or used to support adding a new molecule, then marked as
-                      user-verified in the database.
+                      Supporting files are stored separately so the BrainRoute review team can
+                      inspect methodology and source evidence. After review, accepted records can
+                      be linked to an existing molecule or used to support adding a new molecule,
+                      then marked as user-verified in the database.
                     </p>
                     <p className="mt-3 text-sm leading-6 text-slate-700">
                       Verification does not make a prediction automatically. It records external

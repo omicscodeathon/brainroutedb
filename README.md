@@ -2,7 +2,7 @@
 
 BrainRoute Database is a web portal for exploring blood-brain barrier molecule records, filtering molecule properties, viewing summary charts, submitting verification information, and downloading selected data.
 
-The current application lives in `brainroute-app`. Older root-level React and server files remain in the repository for legacy reference, but they are not required to run the current platform locally.
+The current application lives in `brainroute-app`.
 
 Live site: https://omicscodeathon.github.io/brainroutedb
 
@@ -71,3 +71,4 @@ The app is configured for static export and GitHub Pages under the `/brainrouted
 
 - The active database connection is Supabase.
 - The project expects public Supabase browser credentials only. Do not add service role keys or private credentials to frontend environment files.
+- Built and maintained by the BrainRoute team, with an associated manuscript currently in preparation for publication.
